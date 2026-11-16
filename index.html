@@ -25,7 +25,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px;fl
 .dests{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}.dests button{border:1px solid var(--ln);background:var(--s);border-radius:10px;padding:8px;text-align:start}.dests button[aria-pressed=true]{background:var(--ac);color:var(--on)}
 .sb{border-radius:10px;padding:9px 12px;font-size:13.5px;background:color-mix(in srgb,var(--ok) 13%,var(--s))}.sb.warn{background:color-mix(in srgb,var(--warn) 16%,var(--s))}.sb.bad{background:color-mix(in srgb,var(--bad) 13%,var(--s))}
 .err{color:var(--bad);font-size:13.5px;margin:0}.empty{color:var(--mut);text-align:center;padding:20px}.kv{display:flex;justify-content:space-between;font-size:14px}
-.ph{direction:ltr;unicode-bidi:isolate}.toast{position:fixed;inset-inline:0;bottom:18px;margin:auto;width:max-content;max-width:90%;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1}
+.ph{direction:ltr;unicode-bidi:isolate}.out{align-self:flex-start;background:0;border:1px solid var(--ln);border-radius:8px;padding:3px 10px;font-size:12.5px;color:var(--mut)}.rem{display:flex;gap:7px;align-items:center;font-size:13.5px;color:var(--mut)}.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.toast{position:fixed;inset-inline:0;bottom:18px;margin:auto;width:max-content;max-width:90%;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1}
 </style></head><body>
 <div class="app">
 <section id="s-home"><header><div><h1>المواصلات في سيئون</h1><p class="sub">اختر نوع المشوار الذي تحتاجه</p></div></header>
@@ -38,26 +38,26 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px;fl
 <header><div><h1>تكتك سيئون</h1><p class="sub">أقرب تكتك متفرغ الآن</p></div><div class="tabs" data-tabs><button aria-selected="true" data-t="c">العميل</button><button aria-selected="false" data-t="d">السائق</button></div></header>
 <div id="tk-c" class="panel"><button class="btn" data-a="loc">📍 حدّد موقعي لعرض المسافة</button><div id="map" style="height:300px;border-radius:10px;z-index:0"></div><div class="list" id="tk-list"></div></div>
 <div id="tk-d" hidden><div id="tk-login"></div>
-<div class="panel" id="tk-panel" hidden><b id="tk-name"></b><div class="sb" id="tk-sub"></div><div class="sb bad" id="tk-no" hidden>حسابك غير مسجّل لخدمة التكتك. راجع المكتب إن أردت إضافتها.</div>
+<div class="panel" id="tk-panel" hidden><button class="out" data-a="out">تسجيل الخروج</button><b id="tk-name"></b><div class="sb" id="tk-sub"></div><div class="sb bad" id="tk-no" hidden>حسابك غير مسجّل لخدمة التكتك. راجع المكتب إن أردت إضافتها.</div>
 <div class="seg tkc" id="tk-st"><button data-a="st" data-s="free">متفرغ</button><button data-a="st" data-s="busy">مشغول</button><button data-a="st" data-s="off">إيقاف</button></div>
 <div class="seg tkc" id="tk-nm"><button data-a="nm" data-m="at" aria-pressed="true">أنا الآن في</button><button data-a="nm" data-m="to">متجه إلى</button><button data-a="nm" data-m="free">ملاحظة</button></div>
 <div class="acts tkc"><input id="tk-note" maxlength="60" placeholder="مثال: قرب السوق"><button class="btn p" style="flex:none" data-a="note">نشر</button></div>
-<p class="hint tkc">حالتك تبقى ظاهرة للعملاء حتى تضغط «إيقاف». الموقع يُحدَّث ما دام التطبيق مفتوحاً، وإلا يظهر آخر موقع معروف.</p><button class="btn" data-a="out">تسجيل الخروج</button></div></div></section>
+<p class="hint tkc">حالتك تبقى ظاهرة للعملاء حتى تضغط «إيقاف». الموقع يُحدَّث ما دام التطبيق مفتوحاً، وإلا يظهر آخر موقع معروف.</p></div></div></section>
 
 <section id="s-trips" hidden><button class="back" data-go="home">← الرئيسية</button>
 <header><div><h1 id="tr-title"></h1></div><div class="tabs" data-tabs><button aria-selected="true" data-t="c">المسافر</button><button aria-selected="false" data-t="d">السائق</button></div></header>
 <div id="tr-c"><div class="panel"><b>إلى أين تريد السفر؟</b><div class="dests" id="dests"></div></div><div class="panel"><b id="tr-lt"></b><div class="list" id="tr-list"></div></div></div>
 <div id="tr-d" hidden><div id="tr-login"></div>
-<div class="panel" id="tr-panel" hidden><div class="sb" id="tr-sub"></div><div class="sb bad" id="tr-no" hidden>حسابك غير مسجّل لهذا النوع من الرحلات. راجع المكتب إن أردت إضافته.</div>
+<div class="panel" id="tr-panel" hidden><button class="out" data-a="out">تسجيل الخروج</button><div class="sb" id="tr-sub"></div><div class="sb bad" id="tr-no" hidden>حسابك غير مسجّل لهذا النوع من الرحلات. راجع المكتب إن أردت إضافته.</div>
 <form class="form" id="tf"><b id="tf-t"></b><label class="fld">الوجهة<select id="f-dest"></select></label><label class="fld" id="f-cw">المدينة<select id="f-city"></select></label>
-<div class="f2"><label class="fld">موعد الانطلاق<input type="datetime-local" id="f-at"></label><label class="fld">المقاعد<input type="number" id="f-seats" min="1" max="8" value="4"></label></div>
-<label class="fld">نوع السيارة<select id="f-veh"></select></label><label class="fld">ملاحظة (اختياري)<input id="f-note" maxlength="60"></label>
+<label class="fld">يوم الرحلة<select id="f-day"></select></label><div class="f3"><label class="fld">الساعة<select id="f-h"></select></label><label class="fld">الدقيقة<select id="f-m"></select></label><label class="fld">الفترة<select id="f-ap"><option value="am">صباحاً</option><option value="pm">مساءً</option></select></label></div><label class="fld">عدد المقاعد<input type="number" id="f-seats" min="1" max="8" value="4"></label>
+<label class="fld">نوع السيارة<input id="f-veh" maxlength="30" placeholder="مثال: هايلكس 2020"></label><label class="fld">ملاحظة (اختياري)<input id="f-note" maxlength="60"></label>
 <p class="err" id="f-err" hidden></p><button class="btn p">نشر الرحلة</button></form>
-<b id="my-t">رحلاتي المنشورة</b><div class="list" id="my-list"></div><button class="btn" data-a="out">تسجيل الخروج</button></div></div></section>
+<b id="my-t">رحلاتي المنشورة</b><div class="list" id="my-list"></div></div></div></section>
 
 <section id="s-admin" hidden><button class="back" data-go="home">← الرئيسية</button><header><div><h1>لوحة المكتب</h1><p class="sub">تسجيل السائقين واشتراكاتهم</p></div><div class="tabs" id="ad-tabs" hidden><button aria-selected="true" data-t="l">السائقون</button><button aria-selected="false" data-t="n">تسجيل جديد</button><button aria-selected="false" data-t="f">الرسوم</button></div></header>
 <form class="panel form" id="ad-login"><b>دخول المكتب</b><input id="a-em" type="email" dir="ltr" placeholder="البريد" autocomplete="username"><input id="a-pw" type="password" dir="ltr" placeholder="كلمة المرور" autocomplete="current-password"><p class="err" id="a-err" hidden></p><button class="btn p">دخول</button></form>
-<div id="ad-l" class="panel" hidden><input id="a-q" type="search" placeholder="ابحث بالاسم أو الجوال"><div class="list" id="a-list"></div><button class="btn" data-a="out">تسجيل الخروج</button></div>
+<div id="ad-l" class="panel" hidden><button class="out" data-a="out">تسجيل الخروج</button><input id="a-q" type="search" placeholder="ابحث بالاسم أو الجوال"><div class="list" id="a-list"></div></div>
 <form class="panel form" id="ad-f" hidden><b>رسوم الاشتراك (ريال)</b><p class="hint" style="margin:0">تظهر كقيمة افتراضية عند التسجيل والتجديد.</p><label class="fld">شهر واحد<input id="fe-1" type="number" min="0" step="500"></label><label class="fld">3 أشهر<input id="fe-3" type="number" min="0" step="500"></label><label class="fld">6 أشهر<input id="fe-6" type="number" min="0" step="500"></label><label class="fld">سنة كاملة<input id="fe-12" type="number" min="0" step="500"></label><button class="btn p">حفظ الرسوم</button></form>
 <form class="panel form" id="ad-n" hidden><b>تسجيل سائق بعد استلام الرسوم</b><label class="fld">الاسم<input id="n-name" maxlength="40"></label><label class="fld">الجوال<input id="n-ph" type="tel" dir="ltr" placeholder="7XX XXX XXX"></label><label class="fld">كلمة مرور السائق (6 أحرف فأكثر، تُسلَّم له)<input id="n-pw" dir="ltr" autocomplete="off"></label>
 <div class="checks"><label><input type="checkbox" id="n-tuktuk">تكتك</label><label><input type="checkbox" id="n-internal">داخلية</label><label><input type="checkbox" id="n-external">خارجية</label></div>
@@ -82,7 +82,7 @@ const S={scr:'home',tab:'c',kind:'internal',dest:'المكلا',drivers:{},trips
 const norm=s=>{s=String(s).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/\D/g,'');if(s.startsWith('00967'))s=s.slice(5);else if(s.startsWith('967')&&s.length==12)s=s.slice(3);else if(s.length==10&&s[0]=='0')s=s.slice(1);return s};
 const act=m=>!!m&&!m.suspended&&m.end>Date.now(),days=m=>Math.ceil((m.end-Date.now())/864e5);
 const mst=m=>m.suspended?'suspended':m.end<Date.now()?'expired':days(m)<=7?'soon':'active',STL={active:'ساري',soon:'ينتهي قريباً',expired:'منتهي',suspended:'ملغى'};
-const fD=ms=>new Date(ms).toLocaleDateString('ar',{day:'numeric',month:'long',year:'numeric'}),fT=ms=>new Date(ms).toLocaleString('ar',{weekday:'long',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+const fD=ms=>new Date(ms).toLocaleDateString('ar',{day:'numeric',month:'long',year:'numeric'}),fT=ms=>{const d=new Date(ms),h=d.getHours();return d.toLocaleDateString('ar-u-nu-latn',{weekday:'long',day:'numeric',month:'long'})+' · '+(h%12||12)+':'+String(d.getMinutes()).padStart(2,'0')+' '+(h<12?'صباحاً':'مساءً')};
 const dist=(a,b)=>{const r=Math.PI/180,x=(b.lat-a.lat)*r,y=(b.lng-a.lng)*r,h=Math.sin(x/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(y/2)**2;return 12742e3*Math.asin(Math.sqrt(h))};
 const ago=ms=>{const m=Math.round(ms/6e4);return m<60?'منذ '+m+' دقيقة':m<1440?'منذ '+Math.round(m/60)+' ساعة':'منذ '+Math.round(m/1440)+' يوم'};
 const fd=m=>m<1000?Math.max(10,Math.round(m/10)*10)+' م':(m/1000).toFixed(1)+' كم';
@@ -102,7 +102,7 @@ auth.onAuthStateChanged(async u=>{
   render()});
 db.ref('drivers').on('value',s=>{S.drivers=s.val()||{};render()});
 db.ref('trips').on('value',s=>{S.trips=s.val()||{};render()});
-const loginHtml=`<div class="panel login"><b>دخول السائق</b><p class="hint">اكتب رقم جوالك وكلمة المرور التي سلّمها لك المكتب.</p><input class="lg-ph" type="tel" dir="ltr" inputmode="numeric" placeholder="7XX XXX XXX"><input class="lg-pw" type="password" dir="ltr" placeholder="كلمة المرور"><button class="btn p" data-a="login">دخول</button><p class="err" hidden></p></div>`;
+const loginHtml=`<div class="panel login"><b>دخول السائق</b><p class="hint">اكتب رقم جوالك وكلمة المرور التي سلّمها لك المكتب.</p><input class="lg-ph" type="tel" dir="ltr" inputmode="numeric" placeholder="7XX XXX XXX"><input class="lg-pw" type="password" dir="ltr" placeholder="كلمة المرور"><label class="rem"><input type="checkbox" class="lg-rm"> تذكّرني (البقاء مسجلاً للدخول)</label><button class="btn p" data-a="login">دخول</button><p class="err" hidden></p></div>`;
 $('tk-login').innerHTML=$('tr-login').innerHTML=loginHtml;
 const lerr=(b,t)=>{const e=b.querySelector('.err');e.textContent=t;e.hidden=!t};
 /* ---------- driver location and status ---------- */
@@ -117,8 +117,8 @@ function push(o){const m=S.me;if(!act(m)||!m.services||!m.services.tuktuk)return
 /* ---------- actions ---------- */
 const A={
   async login(b){const bx=b.closest('.login'),p=norm(bx.querySelector('.lg-ph').value),pw=bx.querySelector('.lg-pw').value;if(!/^7\d{8}$/.test(p))return lerr(bx,'اكتب 9 أرقام تبدأ بالرقم 7.');if(!pw)return lerr(bx,'اكتب كلمة المرور.');
-    try{await auth.signInWithEmailAndPassword(p+'@tuk.local',pw);lerr(bx,'')}catch(e){lerr(bx,e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'||e.code=='auth/user-not-found'?'الرقم أو كلمة المرور غير صحيحة':'تعذر الدخول: '+e.code)}},
-  out(){auth.signOut()},
+    try{await auth.setPersistence(bx.querySelector('.lg-rm').checked?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);await auth.signInWithEmailAndPassword(p+'@tuk.local',pw);lerr(bx,'')}catch(e){lerr(bx,e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'||e.code=='auth/user-not-found'?'الرقم أو كلمة المرور غير صحيحة':'تعذر الدخول: '+e.code)}},
+  out(){if(confirm('هل أنت متأكد من تسجيل الخروج؟'))auth.signOut()},
   loc(){navigator.geolocation.getCurrentPosition(p=>{S.pos={lat:p.coords.latitude,lng:p.coords.longitude};render();if(map)map.setView([S.pos.lat,S.pos.lng],15)},()=>toast('تعذر تحديد موقعك'))},
   st(b){const s=b.dataset.s;if(s=='off'){db.ref('drivers/'+S.ph).remove();geo(false)}else push({status:s})},
   nm(b){S.nm=b.dataset.m;[...$('tk-nm').children].forEach(x=>x.setAttribute('aria-pressed',x==b))},
@@ -140,18 +140,20 @@ document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g
   const d=e.target.closest('#dests [data-d]');if(d){S.dest=d.dataset.d;return render()}
   const b=e.target.closest('[data-a]');if(b&&A[b.dataset.a])A[b.dataset.a](b)});
 /* ---------- trips form ---------- */
-function initForm(){const k=S.kind;$('tf-t').textContent='نشر رحلة '+(k=='internal'?'داخلية':'خارجية');$('f-dest').innerHTML=DEST[k].map(x=>opt(x)).join('');$('f-veh').innerHTML=VEH[k].map(x=>opt(x)).join('');fCity()}
+function initTime(){const t=new Date(),o=[];for(let i=0;i<15;i++){const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()+i);o.push(opt(d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),i==0?'اليوم':i==1?'غداً':d.toLocaleDateString('ar-u-nu-latn',{weekday:'long',day:'numeric',month:'long'})))}
+  $('f-day').innerHTML=o.join('');$('f-h').innerHTML=[...Array(12)].map((_,i)=>opt(i+1)).join('');$('f-h').value='8';$('f-m').innerHTML=['00','10','20','30','40','50'].map(x=>opt(x)).join('')}
+function initForm(){initTime();const k=S.kind;$('tf-t').textContent='نشر رحلة '+(k=='internal'?'داخلية':'خارجية');$('f-dest').innerHTML=DEST[k].map(x=>opt(x)).join('');fCity()}
 function fCity(){const ex=S.kind=='external';$('f-cw').hidden=!ex;if(ex)$('f-city').innerHTML=(CITY[$('f-dest').value]||[]).map(x=>opt(x)).join('')}
 $('f-dest').onchange=fCity;
-$('tf').onsubmit=e=>{e.preventDefault();const at=new Date($('f-at').value).getTime(),m=S.me;
-  if(!act(m)||!m.services||!m.services[S.kind])return msg('f-err','الحساب غير مفعّل لهذه الخدمة.');if(!at||at<=Date.now())return msg('f-err','اختر موعداً قادماً.');
-  msg('f-err','');const t={kind:S.kind,dest:$('f-dest').value,city:S.kind=='external'?$('f-city').value:'',at,seats:Math.max(1,Math.min(8,+$('f-seats').value||1)),veh:$('f-veh').value,note:$('f-note').value.trim(),ph:S.ph,name:m.name,end:m.end};
+$('tf').onsubmit=e=>{e.preventDefault();const dp=$('f-day').value.split('-').map(Number),at=new Date(dp[0],dp[1]-1,dp[2],(+$('f-h').value%12)+($('f-ap').value=='pm'?12:0),+$('f-m').value).getTime(),m=S.me;
+  if(!act(m)||!m.services||!m.services[S.kind])return msg('f-err','الحساب غير مفعّل لهذه الخدمة.');if(!at||at<=Date.now())return msg('f-err','اختر موعداً قادماً.');if(!$('f-veh').value.trim())return msg('f-err','اكتب نوع السيارة.');
+  msg('f-err','');const t={kind:S.kind,dest:$('f-dest').value,city:S.kind=='external'?$('f-city').value:'',at,seats:Math.max(1,Math.min(8,+$('f-seats').value||1)),veh:$('f-veh').value.trim(),note:$('f-note').value.trim(),ph:S.ph,name:m.name,end:m.end};
   db.ref('trips').push(t).then(()=>{S.dest=t.dest;$('f-note').value='';toast('تم نشر رحلتك')}).catch(e=>msg('f-err','تعذر النشر: '+e.code))};
 /* ---------- admin ---------- */
 const plans=()=>{const c=$('n-plan').value||1;$('n-plan').innerHTML=[1,3,6,12].map(p=>opt(p,PL[p]+' ('+FEE[p]+' ريال)')).join('');$('n-plan').value=c;$('n-fee').value=FEE[c]};plans();$('n-plan').onchange=function(){$('n-fee').value=FEE[this.value]};
 db.ref('settings/fees').on('value',s=>{const v=s.val()||{};[1,3,6,12].forEach(p=>{if(v['m'+p]>=0){FEE[p]=v['m'+p]}$('fe-'+p).value=FEE[p]});plans();render()});
 $('ad-f').onsubmit=e=>{e.preventDefault();const o={};[1,3,6,12].forEach(p=>o['m'+p]=Math.max(0,Math.round(+$('fe-'+p).value)));db.ref('settings/fees').set(o).then(()=>toast('تم حفظ الرسوم')).catch(()=>toast('تعذر الحفظ'))};
-$('ad-login').onsubmit=e=>{e.preventDefault();auth.signInWithEmailAndPassword($('a-em').value.trim(),$('a-pw').value).catch(e=>msg('a-err',e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'||e.code=='auth/user-not-found'?'البريد أو كلمة المرور غير صحيحة':'تعذر الدخول: '+e.code))};
+$('ad-login').onsubmit=e=>{e.preventDefault();auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>auth.signInWithEmailAndPassword($('a-em').value.trim(),$('a-pw').value)).catch(e=>msg('a-err',e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'||e.code=='auth/user-not-found'?'البريد أو كلمة المرور غير صحيحة':'تعذر الدخول: '+e.code))};
 $('a-q').oninput=render;
 $('ad-n').onsubmit=async e=>{e.preventDefault();const name=$('n-name').value.trim(),ph=norm($('n-ph').value),mo=+$('n-plan').value,fee=Math.round(+$('n-fee').value),rec=$('n-rec').value.trim(),sv={};
   ['tuktuk','internal','external'].forEach(k=>{if($('n-'+k).checked)sv[k]=1});
