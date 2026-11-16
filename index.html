@@ -42,7 +42,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px;fl
 <div class="seg tkc" id="tk-st"><button data-a="st" data-s="free">متفرغ</button><button data-a="st" data-s="busy">مشغول</button><button data-a="st" data-s="off">إيقاف</button></div>
 <div class="seg tkc" id="tk-nm"><button data-a="nm" data-m="at" aria-pressed="true">أنا الآن في</button><button data-a="nm" data-m="to">متجه إلى</button><button data-a="nm" data-m="free">ملاحظة</button></div>
 <div class="acts tkc"><input id="tk-note" maxlength="60" placeholder="مثال: قرب السوق"><button class="btn p" style="flex:none" data-a="note">نشر</button></div>
-<p class="hint tkc">موقعك يُرسل كل 5 ثوانٍ وأنت متصل، ويُحذف تلقائياً عند الإيقاف أو انقطاع الإنترنت.</p><button class="btn" data-a="out">تسجيل الخروج</button></div></div></section>
+<p class="hint tkc">حالتك تبقى ظاهرة للعملاء حتى تضغط «إيقاف». الموقع يُحدَّث ما دام التطبيق مفتوحاً، وإلا يظهر آخر موقع معروف.</p><button class="btn" data-a="out">تسجيل الخروج</button></div></div></section>
 
 <section id="s-trips" hidden><button class="back" data-go="home">← الرئيسية</button>
 <header><div><h1 id="tr-title"></h1></div><div class="tabs" data-tabs><button aria-selected="true" data-t="c">المسافر</button><button aria-selected="false" data-t="d">السائق</button></div></header>
@@ -84,6 +84,7 @@ const act=m=>!!m&&!m.suspended&&m.end>Date.now(),days=m=>Math.ceil((m.end-Date.n
 const mst=m=>m.suspended?'suspended':m.end<Date.now()?'expired':days(m)<=7?'soon':'active',STL={active:'ساري',soon:'ينتهي قريباً',expired:'منتهي',suspended:'ملغى'};
 const fD=ms=>new Date(ms).toLocaleDateString('ar',{day:'numeric',month:'long',year:'numeric'}),fT=ms=>new Date(ms).toLocaleString('ar',{weekday:'long',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
 const dist=(a,b)=>{const r=Math.PI/180,x=(b.lat-a.lat)*r,y=(b.lng-a.lng)*r,h=Math.sin(x/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(y/2)**2;return 12742e3*Math.asin(Math.sqrt(h))};
+const ago=ms=>{const m=Math.round(ms/6e4);return m<60?'منذ '+m+' دقيقة':m<1440?'منذ '+Math.round(m/60)+' ساعة':'منذ '+Math.round(m/1440)+' يوم'};
 const fd=m=>m<1000?Math.max(10,Math.round(m/10)*10)+' م':(m/1000).toFixed(1)+' كم';
 const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2800)};
 const msg=(id,t)=>{const e=$(id);e.textContent=t||'';e.hidden=!t};
@@ -112,7 +113,7 @@ function geo(on){if(on&&wid==null&&navigator.geolocation)wid=navigator.geolocati
 function push(o){const m=S.me;if(!act(m)||!m.services||!m.services.tuktuk)return toast('الحساب غير مفعّل للتكتك أو الاشتراك غير فعّال');
   last=Date.now();const c=mine()||{},r=db.ref('drivers/'+S.ph);
   r.set(Object.assign({phone:S.ph,name:m.name,tuk:m.tukNo||'',status:c.status||'free',note:c.note||null,end:m.end,lat:S.gps?S.gps.lat:null,lng:S.gps?S.gps.lng:null,ts:firebase.database.ServerValue.TIMESTAMP},o)).catch(e=>toast('تعذر الإرسال: '+e.code));
-  r.onDisconnect().remove();geo(true)}
+  geo(true)}
 /* ---------- actions ---------- */
 const A={
   async login(b){const bx=b.closest('.login'),p=norm(bx.querySelector('.lg-ph').value),pw=bx.querySelector('.lg-pw').value;if(!/^7\d{8}$/.test(p))return lerr(bx,'اكتب 9 أرقام تبدأ بالرقم 7.');if(!pw)return lerr(bx,'اكتب كلمة المرور.');
@@ -176,14 +177,14 @@ function render(){
   if(scr=='internal'||scr=='external'){if(S.kind!=scr||!DEST[scr].includes(S.dest)){S.kind=scr;S.dest=DEST[scr][0];initForm()}}
   if(S.scr!=scr){S.scr=scr;S.tab='c';scrollTo(0,0)}
   $('s-home').hidden=scr!='home';$('s-tuktuk').hidden=scr!='tuktuk';$('s-trips').hidden=!/internal|external/.test(scr);$('s-admin').hidden=scr!='admin';
-  const now=Date.now(),live=Object.values(S.drivers).filter(d=>d.status!='off'&&d.end>now&&now-d.ts<6e5),okT=k=>Object.keys(S.trips).map(i=>Object.assign({id:i},S.trips[i])).filter(t=>t.kind==k&&t.seats>0&&t.at>now&&t.end>now);
+  const now=Date.now(),live=Object.values(S.drivers).filter(d=>d.status!='off'&&d.end>now),okT=k=>Object.keys(S.trips).map(i=>Object.assign({id:i},S.trips[i])).filter(t=>t.kind==k&&t.seats>0&&t.at>now&&t.end>now);
   if(scr=='home'){$('h-tk').textContent=live.filter(d=>d.status=='free').length+' متفرغ الآن';$('h-in').textContent='رحلات قادمة: '+okT('internal').length;$('h-ex').textContent='رحلات قادمة: '+okT('external').length}
   [...document.querySelectorAll('[data-tabs]')].forEach(t=>[...t.children].forEach(b=>b.setAttribute('aria-selected',b.dataset.t==S.tab)));
   if(scr=='tuktuk'){const c=S.tab=='c';$('tk-c').hidden=!c;$('tk-d').hidden=c;
     live.forEach(d=>d.m=S.pos&&d.lat!=null?dist(S.pos,d):null);live.sort((x,y)=>(x.status=='free'?0:1)-(y.status=='free'?0:1)||(x.m==null?1e12:x.m)-(y.m==null?1e12:y.m));
-    $('tk-list').innerHTML=live.map(d=>`<div class="row"><div class="top"><div class="nm">${esc(d.name)}<div class="meta">تكتك رقم ${esc(d.tuk)}</div>${d.note?`<div class="note">${d.note.mode=='at'?'الآن في: ':d.note.mode=='to'?'متجه إلى: ':''}${esc(d.note.text)}</div>`:''}</div><span class="pill ${d.status}">${d.status=='free'?'متفرغ':'مشغول'}</span><div class="dist">${d.m!=null?fd(d.m):''}</div></div><div class="acts">${contact(d.phone)}${d.lat!=null?`<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${d.lat},${d.lng}">الخريطة</a>`:''}</div></div>`).join('')||'<div class="empty">لا يوجد تكتك متصل الآن.</div>';
+    $('tk-list').innerHTML=live.map(d=>`<div class="row"><div class="top"><div class="nm">${esc(d.name)}<div class="meta">تكتك رقم ${esc(d.tuk)}</div>${d.lat!=null&&now-d.ts>12e4?`<div class="meta">آخر موقع معروف ${ago(now-d.ts)}</div>`:''}${d.note?`<div class="note">${d.note.mode=='at'?'الآن في: ':d.note.mode=='to'?'متجه إلى: ':''}${esc(d.note.text)}</div>`:''}</div><span class="pill ${d.status}">${d.status=='free'?'متفرغ':'مشغول'}</span><div class="dist">${d.m!=null?fd(d.m):''}</div></div><div class="acts">${contact(d.phone)}${d.lat!=null?`<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${d.lat},${d.lng}">الخريطة</a>`:''}</div></div>`).join('')||'<div class="empty">لا يوجد تكتك متصل الآن.</div>';
     try{drawMap(live)}catch(e){console.error(e)}$('tk-login').hidden=!!S.ph;$('tk-panel').hidden=!S.ph;
-    if(S.ph&&S.me){const s=sb(S.me),c2=mine(),ok=!!(S.me.services&&S.me.services.tuktuk);$('tk-no').hidden=ok;document.querySelectorAll('.tkc').forEach(e=>e.hidden=!ok);$('tk-name').textContent=S.me.name+(S.me.tukNo?' · تكتك رقم '+S.me.tukNo:'');$('tk-sub').className='sb '+s[0];$('tk-sub').textContent=s[1];
+    if(S.ph&&S.me){const s=sb(S.me),c2=mine(),ok=!!(S.me.services&&S.me.services.tuktuk);$('tk-no').hidden=ok;document.querySelectorAll('.tkc').forEach(e=>e.hidden=!ok);if(c2&&ok)geo(true);$('tk-name').textContent=S.me.name+(S.me.tukNo?' · تكتك رقم '+S.me.tukNo:'');$('tk-sub').className='sb '+s[0];$('tk-sub').textContent=s[1];
       [...$('tk-st').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.s==(c2?c2.status:'off')))}}
   if(/internal|external/.test(scr)){const c=S.tab=='c',k=S.kind,l=okT(k);$('tr-c').hidden=!c;$('tr-d').hidden=c;$('tr-title').textContent=k=='internal'?'الرحلات الداخلية':'الرحلات الخارجية';
     $('dests').innerHTML=DEST[k].map(d=>`<button data-d="${d}" aria-pressed="${d==S.dest}"><b>${d}</b><br><span class="meta">${l.filter(t=>t.dest==d).length} رحلة</span></button>`).join('');$('tr-lt').textContent='المتاحون للسفر إلى '+S.dest;
