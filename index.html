@@ -78,7 +78,7 @@ section:not([hidden]){animation:vin .18s ease-out}@keyframes vin{from{opacity:0;
 firebase.initializeApp({apiKey:"AIzaSyDfW7QhCSmDoTsgr9EgjtiO2MyhWoZZVb4",authDomain:"mishwar-1d868.firebaseapp.com",databaseURL:"https://mishwar-1d868-default-rtdb.firebaseio.com",projectId:"mishwar-1d868",storageBucket:"mishwar-1d868.firebasestorage.app",messagingSenderId:"1089490145219",appId:"1:1089490145219:web:5edc0f64171030806bf776"});
 const auth=firebase.auth(),db=firebase.database(),$=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const DEST={internal:['المكلا','عدن','العبر','تريم','عتق','الغيضة','صنعاء','مأرب','تعز','إب','الحديدة'],external:['السعودية','عمان']};
+const DEST={internal:['المكلا','عدن','العبر','عتق','الغيضة','صنعاء','إب'],external:['السعودية','عمان']};
 const CITY={'السعودية':['الرياض','جدة','نجران','الدمام'],'عمان':['صلالة','مسقط']};
 const VEH={internal:['هايلكس','باص صغير','سيارة صالون','فان'],external:['باص','لاندكروزر','هايلكس']};
 const FEE={1:5000,3:13000,6:25000,12:45000},PL={1:'شهر واحد',3:'3 أشهر',6:'6 أشهر',12:'سنة كاملة'},SV={tuktuk:'تكتك',internal:'داخلية',external:'خارجية'};
