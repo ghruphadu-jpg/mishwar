@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>المواصلات في سيئون</title>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#2b3a8c"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600&family=Reem+Kufi:wght@500;700&display=swap">
@@ -26,10 +26,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px;fl
 .dests{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}.dests button{border:1px solid var(--ln);background:var(--s);border-radius:10px;padding:8px;text-align:start}.dests button[aria-pressed=true]{background:var(--ac);color:var(--on)}
 .sb{border-radius:10px;padding:9px 12px;font-size:13.5px;background:color-mix(in srgb,var(--ok) 13%,var(--s))}.sb.warn{background:color-mix(in srgb,var(--warn) 16%,var(--s))}.sb.bad{background:color-mix(in srgb,var(--bad) 13%,var(--s))}
 .err{color:var(--bad);font-size:13.5px;margin:0}.empty{color:var(--mut);text-align:center;padding:20px}.kv{display:flex;justify-content:space-between;font-size:14px}
-.ph{direction:ltr;unicode-bidi:isolate;-webkit-user-select:text;user-select:text}
-html,body{overscroll-behavior-y:contain;-webkit-tap-highlight-color:transparent}body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}input,select{-webkit-user-select:text;user-select:text}
-button,.btn,.hub-card{transition:transform .08s}button:active,.btn:active,.hub-card:active{transform:scale(.97)}
-section:not([hidden]){animation:vin .18s ease-out}@keyframes vin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){section:not([hidden]){animation:none}}.tbar{display:flex;gap:8px;flex-wrap:wrap}.out{align-self:flex-start;background:0;border:1px solid var(--ln);border-radius:8px;padding:3px 10px;font-size:12.5px;color:var(--mut)}.rem{display:flex;gap:7px;align-items:center;font-size:13.5px;color:var(--mut)}.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.toast{position:fixed;inset-inline:0;bottom:18px;margin:auto;width:max-content;max-width:90%;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1}
+.ph{direction:ltr;unicode-bidi:isolate}.out{align-self:flex-start;background:0;border:1px solid var(--ln);border-radius:8px;padding:3px 10px;font-size:12.5px;color:var(--mut)}.rem{display:flex;gap:7px;align-items:center;font-size:13.5px;color:var(--mut)}.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.toast{position:fixed;inset-inline:0;bottom:18px;margin:auto;width:max-content;max-width:90%;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1}
+.chat{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}.chat header{padding:12px 16px;border-bottom:1px solid var(--ln);background:var(--s)}#cmsgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px}.bub{max-width:80%;padding:8px 12px;border-radius:14px;background:var(--s);border:1px solid var(--ln);align-self:flex-start;word-break:break-word}.bub.me{align-self:flex-end;background:var(--ac);color:var(--on);border-color:var(--ac)}#cf{display:flex;gap:8px;padding:10px;border-top:1px solid var(--ln);background:var(--s)}
 </style></head><body>
 <div class="app">
 <section id="s-home"><header><div><h1>المواصلات في سيئون</h1><p class="sub">اختر نوع المشوار الذي تحتاجه</p></div></header>
@@ -40,20 +38,20 @@ section:not([hidden]){animation:vin .18s ease-out}@keyframes vin{from{opacity:0;
 
 <section id="s-tuktuk" hidden><button class="back" data-go="home">← الرئيسية</button>
 <header><div><h1>تكتك سيئون</h1><p class="sub">أقرب تكتك متفرغ الآن</p></div><div class="tabs" data-tabs><button aria-selected="true" data-t="c">العميل</button><button aria-selected="false" data-t="d">السائق</button></div></header>
-<div id="tk-c" class="panel"><button class="btn" data-a="loc">📍 حدّد موقعي لعرض المسافة</button><div id="map" style="height:300px;border-radius:10px;z-index:0"></div><div class="list" id="tk-list"></div></div>
+<div id="tk-c" class="panel"><div id="rq-new" class="form"><b>اطلب مشوارك</b><form class="form" id="rf"><label class="fld">اسمك<input id="r-name" maxlength="30"></label><label class="fld">مكان وجودك<input id="r-from" maxlength="60" placeholder="مثال: قرب السوق"></label><label class="fld">إلى أين تريد الذهاب؟<input id="r-to" maxlength="60" placeholder="مثال: المستشفى"></label><label class="fld">ملاحظة (اختياري)<input id="r-note" maxlength="60"></label><p class="err" id="r-err" hidden></p><button class="btn p">إرسال الطلب للسائقين</button></form></div><div id="rq-my" class="list"></div><button class="btn" data-a="loc">📍 حدّد موقعي لعرض المسافة</button><div id="map" style="height:300px;border-radius:10px;z-index:0"></div><div class="list" id="tk-list"></div></div>
 <div id="tk-d" hidden><div id="tk-login"></div>
-<div class="panel" id="tk-panel" hidden><div class="topc"></div><b id="tk-name"></b><div class="sb" id="tk-sub"></div><div class="sb bad" id="tk-no" hidden>حسابك غير مسجّل لخدمة التكتك. راجع المكتب إن أردت إضافتها.</div>
+<div class="panel" id="tk-panel" hidden><button class="out" data-a="out">تسجيل الخروج</button><b id="tk-name"></b><div class="sb" id="tk-sub"></div><div class="sb bad" id="tk-no" hidden>حسابك غير مسجّل لخدمة التكتك. راجع المكتب إن أردت إضافتها.</div>
 <div class="seg tkc" id="tk-st"><button data-a="st" data-s="free">متفرغ</button><button data-a="st" data-s="busy">مشغول</button><button data-a="st" data-s="off">إيقاف</button></div>
 <div class="seg tkc" id="tk-nm"><button data-a="nm" data-m="at" aria-pressed="true">أنا الآن في</button><button data-a="nm" data-m="to">متجه إلى</button><button data-a="nm" data-m="free">ملاحظة</button></div>
 <div class="acts tkc"><input id="tk-note" maxlength="60" placeholder="مثال: قرب السوق"><button class="btn p" style="flex:none" data-a="note">نشر</button></div>
-<p class="hint tkc">حالتك تبقى ظاهرة للعملاء حتى تضغط «إيقاف». الموقع يُحدَّث ما دام التطبيق مفتوحاً، وإلا يظهر آخر موقع معروف.</p></div></div></section>
+<p class="hint tkc">حالتك تبقى ظاهرة للعملاء حتى تضغط «إيقاف». الموقع يُحدَّث ما دام التطبيق مفتوحاً، وإلا يظهر آخر موقع معروف.</p><b class="tkc">طلبات العملاء</b><div class="list tkc" id="dr-rides"></div></div></div></section>
 
 <section id="s-trips" hidden><button class="back" data-go="home">← الرئيسية</button>
 <header><div><h1 id="tr-title"></h1></div><div class="tabs" data-tabs><button aria-selected="true" data-t="c">المسافر</button><button aria-selected="false" data-t="d">السائق</button></div></header>
 <div id="tr-c"><div class="panel"><b>إلى أين تريد السفر؟</b><div class="dests" id="dests"></div></div><div class="panel"><b id="tr-lt"></b><div class="list" id="tr-list"></div></div></div>
 <div id="tr-d" hidden><div id="tr-login"></div>
-<div class="panel" id="tr-panel" hidden><div class="topc"></div><div class="sb" id="tr-sub"></div><div class="sb bad" id="tr-no" hidden>حسابك غير مسجّل لهذا النوع من الرحلات. راجع المكتب إن أردت إضافته.</div>
-<form class="form" id="tf"><b id="tf-t"></b><label class="fld">الوجهة<select id="f-dest"></select></label><label class="fld" id="f-ow" hidden>اكتب الوجهة<input id="f-od" maxlength="30" placeholder="مثال: شبام"></label><label class="fld" id="f-cw">المدينة<select id="f-city"></select></label>
+<div class="panel" id="tr-panel" hidden><button class="out" data-a="out">تسجيل الخروج</button><div class="sb" id="tr-sub"></div><div class="sb bad" id="tr-no" hidden>حسابك غير مسجّل لهذا النوع من الرحلات. راجع المكتب إن أردت إضافته.</div>
+<form class="form" id="tf"><b id="tf-t"></b><label class="fld">الوجهة<select id="f-dest"></select></label><label class="fld" id="f-cw">المدينة<select id="f-city"></select></label>
 <label class="fld">يوم الرحلة<select id="f-day"></select></label><div class="f3"><label class="fld">الساعة<select id="f-h"></select></label><label class="fld">الدقيقة<select id="f-m"></select></label><label class="fld">الفترة<select id="f-ap"><option value="am">صباحاً</option><option value="pm">مساءً</option></select></label></div><label class="fld">عدد المقاعد<input type="number" id="f-seats" min="1" max="8" value="4"></label>
 <label class="fld">نوع السيارة<input id="f-veh" maxlength="30" placeholder="مثال: هايلكس 2020"></label><label class="fld">ملاحظة (اختياري)<input id="f-note" maxlength="60"></label>
 <p class="err" id="f-err" hidden></p><button class="btn p">نشر الرحلة</button></form>
@@ -68,7 +66,7 @@ section:not([hidden]){animation:vin .18s ease-out}@keyframes vin{from{opacity:0;
 <div class="f2"><label class="fld">المركبة<input id="n-veh" maxlength="40"></label><label class="fld">رقم التكتك<input id="n-tuk" inputmode="numeric"></label></div>
 <div class="f2"><label class="fld">المدة<select id="n-plan"></select></label><label class="fld">المبلغ (ريال)<input id="n-fee" type="number" min="0" step="500"></label></div>
 <label class="fld">رقم سند القبض<input id="n-rec"></label><p class="err" id="n-err" hidden></p><button class="btn p">تسجيل وفتح الحساب</button></form></section>
-</div><div class="toast" id="toast"></div>
+</div><div class="chat" id="chat" hidden><header><b id="ct"></b><button class="back" id="cx">إغلاق</button></header><div id="cmsgs"></div><form id="cf"><input id="cin" maxlength="500" placeholder="اكتب رسالة..." autocomplete="off"><button class="btn p" style="flex:none">إرسال</button></form></div><div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -78,7 +76,7 @@ section:not([hidden]){animation:vin .18s ease-out}@keyframes vin{from{opacity:0;
 firebase.initializeApp({apiKey:"AIzaSyDfW7QhCSmDoTsgr9EgjtiO2MyhWoZZVb4",authDomain:"mishwar-1d868.firebaseapp.com",databaseURL:"https://mishwar-1d868-default-rtdb.firebaseio.com",projectId:"mishwar-1d868",storageBucket:"mishwar-1d868.firebasestorage.app",messagingSenderId:"1089490145219",appId:"1:1089490145219:web:5edc0f64171030806bf776"});
 const auth=firebase.auth(),db=firebase.database(),$=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const DEST={internal:['المكلا','عدن','العبر','عتق','الغيضة','صنعاء','إب'],external:['السعودية','عمان']};
+const DEST={internal:['المكلا','عدن','العبر','تريم','عتق','الغيضة'],external:['السعودية','عمان']};
 const CITY={'السعودية':['الرياض','جدة','نجران','الدمام'],'عمان':['صلالة','مسقط']};
 const VEH={internal:['هايلكس','باص صغير','سيارة صالون','فان'],external:['باص','لاندكروزر','هايلكس']};
 const FEE={1:5000,3:13000,6:25000,12:45000},PL={1:'شهر واحد',3:'3 أشهر',6:'6 أشهر',12:'سنة كاملة'},SV={tuktuk:'تكتك',internal:'داخلية',external:'خارجية'};
@@ -96,11 +94,37 @@ const contact=p=>`<a class="btn p" href="tel:+967${p}">اتصال</a><a class="b
 const opt=(v,l)=>`<option value="${esc(v)}">${esc(l==null?v:l)}</option>`;
 const sb=m=>{if(!m)return['bad','جارٍ التحميل...'];const s=mst(m);return s=='suspended'?['bad','تم إلغاء اشتراكك. راجع المكتب.']:s=='expired'?['bad','انتهى اشتراكك في '+fD(m.end)+'. جدّد عند المكتب.']:s=='soon'?['warn','ينتهي اشتراكك خلال '+days(m)+' يوم. جدّد عند المكتب.']:['','اشتراكك ساري حتى '+fD(m.end)]};
 let LS=[];
+/* ---------- ride requests + chat ---------- */
+Object.assign(S,{my:{},open:{},acc:{},dl:0,dn:0,chat:null});
+const fresh=r=>Date.now()-r.ts<72e5||r.status=='accepted';
+const ls=(q,f)=>{LS.push(q);q.on('value',s=>{f(s.val()||{});render()},()=>{})};
+function myRides(uid){ls(db.ref('rides').orderByChild('cid').equalTo(uid),v=>{S.my=v})}
+function drvRides(){if(S.dl||!S.ph||!act(S.me)||!(S.me.services&&S.me.services.tuktuk))return;S.dl=1;
+  ls(db.ref('rides').orderByChild('status').equalTo('open'),v=>{const n=Object.keys(v).filter(k=>!S.open[k]);if(S.dn&&n.length){toast('طلب مشوار جديد');navigator.vibrate&&navigator.vibrate(200)}S.open=v;S.dn=1});
+  ls(db.ref('rides').orderByChild('driver').equalTo(S.ph),v=>{S.acc=v})}
+let cref=null;
+function openChat(id,w){closeChat();const r=(w=='c'?S.my:S.acc)[id]||{},o=(r.offers||{})[r.driver]||{};S.chat=id;
+  $('ct').textContent=w=='c'?'الدردشة مع السائق '+(o.name||''):'الدردشة مع '+(r.name||'العميل');$('chat').hidden=false;$('cmsgs').innerHTML='';
+  cref=db.ref('chats/'+id);cref.on('value',s=>{let h='';s.forEach(c=>{const m=c.val();h+=`<div class="bub${m.uid==auth.currentUser.uid?' me':''}">${esc(m.text)}</div>`});$('cmsgs').innerHTML=h;$('cmsgs').scrollTop=1e9},()=>toast('تعذر فتح الدردشة'))}
+function closeChat(){if(cref){cref.off();cref=null}S.chat=null;$('chat').hidden=true}
+$('cx').onclick=closeChat;
+$('cf').onsubmit=e=>{e.preventDefault();const t=$('cin').value.trim();if(!t||!S.chat)return;$('cin').value='';db.ref('chats/'+S.chat).push({uid:auth.currentUser.uid,text:t,ts:firebase.database.ServerValue.TIMESTAMP}).catch(x=>toast('تعذر الإرسال: '+x.code))};
+$('rf').onsubmit=async e=>{e.preventDefault();const to=$('r-to').value.trim();if(!to)return msg('r-err','اكتب المكان الذي تريد الذهاب إليه.');msg('r-err','');
+  try{if(!auth.currentUser)await auth.signInAnonymously();await db.ref('rides').push({cid:auth.currentUser.uid,name:$('r-name').value.trim()||'عميل',from:$('r-from').value.trim(),to,note:$('r-note').value.trim(),status:'open',ts:firebase.database.ServerValue.TIMESTAMP});e.target.reset();toast('تم إرسال طلبك للسائقين')}catch(x){msg('r-err','تعذر الإرسال: '+x.code)}};
+const rt=r=>`${esc(r.from||'—')} ← ${esc(r.to)}`;
+function rideUI(){const n=Date.now(),my=Object.keys(S.my).map(i=>Object.assign({id:i},S.my[i])).filter(fresh).sort((a,b)=>b.ts-a.ts);$('rq-new').hidden=my.length>0;
+  $('rq-my').innerHTML=my.map(r=>{const of=Object.entries(r.offers||{}).filter(x=>x[1].status!='rejected'),o=(r.offers||{})[r.driver]||{};
+    return `<div class="row" data-id="${r.id}"><div class="top"><div class="nm">${rt(r)}<div class="meta">${ago(n-r.ts)}</div></div><span class="pill ${r.status=='open'?'soon':'free'}">${r.status=='open'?'بانتظار السائقين':'تمت الموافقة'}</span></div>`+
+    (r.status=='accepted'?`<div class="sb">السائق ${esc(o.name||'')}${o.tuk?' · تكتك '+esc(o.tuk):''}</div><div class="acts"><button class="btn p" data-a="chat" data-w="c">💬 دردشة</button><button class="btn d" data-a="cancelRide">إنهاء</button></div>`:
+    (of.map(x=>`<div class="sb"><b>${esc(x[1].name)}</b>${x[1].tuk?' · تكتك '+esc(x[1].tuk):''} يوافق على مشوارك<div class="acts" style="margin-top:6px"><button class="btn p" data-a="okOffer" data-p="${x[0]}">قبول</button><button class="btn" data-a="noOffer" data-p="${x[0]}">رفض</button></div></div>`).join('')||'<div class="hint">لم يوافق أحد بعد، ابقَ في الصفحة.</div>')+'<div class="acts"><button class="btn d" data-a="cancelRide">إلغاء الطلب</button></div>')+'</div>'}).join('');
+  if(S.ph&&S.me){const mk=k=>(o)=>Object.keys(o).map(i=>Object.assign({id:i},o[i])),op=mk()(S.open).filter(fresh).sort((a,b)=>b.ts-a.ts),ac=mk()(S.acc);
+    $('dr-rides').innerHTML=ac.map(r=>`<div class="row" data-id="${r.id}"><div class="top"><div class="nm">${esc(r.name)}<div class="meta">${rt(r)}</div></div><span class="pill free">مقبول</span></div><div class="acts"><button class="btn p" data-a="chat" data-w="d">💬 دردشة</button></div></div>`).join('')+
+    op.map(r=>{const o=(r.offers||{})[S.ph];return `<div class="row" data-id="${r.id}"><div class="top"><div class="nm">${esc(r.name)}<div class="meta">${rt(r)} · ${ago(n-r.ts)}</div>${r.note?`<div class="note">${esc(r.note)}</div>`:''}</div></div><div class="acts">${!o?'<button class="btn p" data-a="offer">أستطيع القيام بالمشوار</button>':o.status=='rejected'?'<span class="pill busy">رفض العميل عرضك</span>':'<span class="pill soon">بانتظار رد العميل</span><button class="btn" data-a="unoffer">سحب</button>'}</div></div>`}).join('')||'<div class="empty">لا توجد طلبات الآن.</div>'}}
 /* ---------- auth ---------- */
 auth.onAuthStateChanged(async u=>{
-  LS.forEach(r=>r.off());LS=[];S.ph=null;S.me=null;S.admin=false;S.members={};geo(false);
+  LS.forEach(r=>r.off());LS=[];S.ph=null;S.me=null;S.admin=false;S.members={};geo(false);S.my={};S.open={};S.acc={};S.dl=0;S.dn=0;closeChat();if(u)myRides(u.uid);
   if(u&&u.email&&u.email.endsWith('@tuk.local')){S.ph=u.email.replace('@tuk.local','');const r=db.ref('members/'+S.ph);LS.push(r);
-    r.on('value',s=>{S.me=s.val();if(!S.me){toast('رقمك غير مسجل لدى المكتب');auth.signOut();return}render()},e=>toast('تعذر قراءة حسابك: '+e.code))}
+    r.on('value',s=>{S.me=s.val();if(!S.me){toast('رقمك غير مسجل لدى المكتب');auth.signOut();return}drvRides();render()},e=>toast('تعذر قراءة حسابك: '+e.code))}
   else if(u&&u.email){let s;try{s=await db.ref('admin').once('value')}catch(e){toast('تعذر قراءة الصلاحيات: '+e.code);auth.signOut();return}S.admin=s.val()===u.uid;
     if(S.admin){const r=db.ref('members');LS.push(r);r.on('value',s=>{S.members=s.val()||{};render()})}else{toast('هذا الحساب ليس حساب المكتب');auth.signOut()}}
   render()});
@@ -108,13 +132,6 @@ db.ref('drivers').on('value',s=>{S.drivers=s.val()||{};render()});
 db.ref('trips').on('value',s=>{S.trips=s.val()||{};render()});
 const loginHtml=`<div class="panel login"><b>دخول السائق</b><p class="hint">اكتب رقم جوالك وكلمة المرور التي سلّمها لك المكتب.</p><input class="lg-ph" type="tel" dir="ltr" inputmode="numeric" placeholder="7XX XXX XXX"><input class="lg-pw" type="password" dir="ltr" placeholder="كلمة المرور"><label class="rem"><input type="checkbox" class="lg-rm"> تذكّرني (البقاء مسجلاً للدخول)</label><button class="btn p" data-a="login">دخول</button><p class="err" hidden></p></div>`;
 $('tk-login').innerHTML=$('tr-login').innerHTML=loginHtml;
-const TOP=`<div class="tbar"><button class="out" data-a="out">تسجيل الخروج</button><button class="out" data-a="pwt">تغيير كلمة المرور</button></div><form class="pwf form" hidden><input class="pw-o" type="password" dir="ltr" placeholder="كلمة المرور الحالية" autocomplete="current-password"><input class="pw-n" type="password" dir="ltr" placeholder="كلمة المرور الجديدة (6 أحرف فأكثر)" autocomplete="new-password"><input class="pw-c" type="password" dir="ltr" placeholder="أعد كتابة الجديدة" autocomplete="new-password"><p class="err" hidden></p><button class="btn p">حفظ كلمة المرور</button></form>`;
-document.querySelectorAll('.topc').forEach(e=>e.innerHTML=TOP);
-document.addEventListener('submit',async e=>{const f=e.target.closest('.pwf');if(!f)return;e.preventDefault();
-  const q=c=>f.querySelector(c),n=q('.pw-n').value,er=m=>{const p=q('.err');p.textContent=m;p.hidden=!m};
-  if(n.length<6)return er('كلمة المرور الجديدة 6 أحرف على الأقل.');if(n!==q('.pw-c').value)return er('كلمتا المرور غير متطابقتين.');
-  try{const u=auth.currentUser;await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,q('.pw-o').value));await u.updatePassword(n);f.reset();f.hidden=true;er('');toast('تم تغيير كلمة المرور')}
-  catch(x){er(x.code=='auth/invalid-credential'||x.code=='auth/wrong-password'?'كلمة المرور الحالية غير صحيحة.':'تعذر التغيير: '+x.code)}});
 const lerr=(b,t)=>{const e=b.querySelector('.err');e.textContent=t;e.hidden=!t};
 /* ---------- driver location and status ---------- */
 let wid=null,last=0;
@@ -127,6 +144,12 @@ function push(o){const m=S.me;if(!act(m)||!m.services||!m.services.tuktuk)return
   geo(true)}
 /* ---------- actions ---------- */
 const A={
+  offer(b){const m=S.me;db.ref('rides/'+b.closest('[data-id]').dataset.id+'/offers/'+S.ph).set({name:m.name,tuk:m.tukNo||'',status:'pending',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>toast('تم إرسال موافقتك للعميل')).catch(e=>toast('تعذر الإرسال: '+e.code))},
+  unoffer(b){db.ref('rides/'+b.closest('[data-id]').dataset.id+'/offers/'+S.ph).remove()},
+  okOffer(b){const id=b.closest('[data-id]').dataset.id,p=b.dataset.p,u={status:'accepted',driver:p};u['offers/'+p+'/status']='accepted';db.ref('rides/'+id).update(u).then(()=>openChat(id,'c')).catch(e=>toast('تعذر القبول: '+e.code))},
+  noOffer(b){db.ref('rides/'+b.closest('[data-id]').dataset.id+'/offers/'+b.dataset.p+'/status').set('rejected')},
+  cancelRide(b){const id=b.closest('[data-id]').dataset.id;if(!confirm('إنهاء الطلب؟'))return;const u={};u['rides/'+id]=null;u['chats/'+id]=null;db.ref().update(u).then(closeChat).catch(e=>toast('تعذر: '+e.code))},
+  chat(b){openChat(b.closest('[data-id]').dataset.id,b.dataset.w)},
   async login(b){const bx=b.closest('.login'),p=norm(bx.querySelector('.lg-ph').value),pw=bx.querySelector('.lg-pw').value;if(!/^7\d{8}$/.test(p))return lerr(bx,'اكتب 9 أرقام تبدأ بالرقم 7.');if(!pw)return lerr(bx,'اكتب كلمة المرور.');
     try{await auth.setPersistence(bx.querySelector('.lg-rm').checked?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);await auth.signInWithEmailAndPassword(p+'@tuk.local',pw);lerr(bx,'')}catch(e){lerr(bx,e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'||e.code=='auth/user-not-found'?'الرقم أو كلمة المرور غير صحيحة':'تعذر الدخول: '+e.code)}},
   out(){if(confirm('هل أنت متأكد من تسجيل الخروج؟'))auth.signOut()},
@@ -134,10 +157,6 @@ const A={
   st(b){const s=b.dataset.s;if(s=='off'){db.ref('drivers/'+S.ph).remove();geo(false)}else push({status:s})},
   nm(b){S.nm=b.dataset.m;[...$('tk-nm').children].forEach(x=>x.setAttribute('aria-pressed',x==b))},
   note(){const v=$('tk-note').value.trim();if(!mine())return toast('اضغط «متفرغ» أولاً ليظهر حسابك');push({note:v?{mode:S.nm,text:v}:null});$('tk-note').value='';toast(v?'تم نشر حالتك':'تم حذف الملاحظة')},
-  pwt(b){const f=b.closest('.topc').querySelector('.pwf');f.hidden=!f.hidden},
-  async apw(b){const r=b.closest('[data-id]'),ph=r.dataset.id,pw=r.querySelector('.pw-a').value;if(pw.length<6)return toast('كلمة المرور 6 أحرف على الأقل');
-    try{const sec=firebase.apps.find(a=>a.name=='sec')||firebase.initializeApp(firebase.app().options,'sec');await sec.auth().createUserWithEmailAndPassword(ph+'@tuk.local',pw);await sec.auth().signOut();toast('تم تعيين كلمة المرور الجديدة')}
-    catch(e){toast(e.code=='auth/email-already-in-use'?'للسائق حساب دخول. احذفه من Firebase ← Authentication ← Users ثم أعد المحاولة.':'تعذر: '+e.code)}},
   sel(b){const id=b.closest('[data-id]').dataset.id;S.sel=S.sel==id?null:id;render()},
   seat(b){const id=b.closest('[data-id]').dataset.id,t=S.trips[id];if(t)db.ref('trips/'+id+'/seats').set(Math.max(0,Math.min(8,t.seats+(b.dataset.d=='+'?1:-1))))},
   del(b){if(confirm('إلغاء الرحلة؟'))db.ref('trips/'+b.closest('[data-id]').dataset.id).remove()},
@@ -157,13 +176,13 @@ document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g
 /* ---------- trips form ---------- */
 function initTime(){const t=new Date(),o=[];for(let i=0;i<15;i++){const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()+i);o.push(opt(d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),i==0?'اليوم':i==1?'غداً':d.toLocaleDateString('ar-u-nu-latn',{weekday:'long',day:'numeric',month:'long'})))}
   $('f-day').innerHTML=o.join('');$('f-h').innerHTML=[...Array(12)].map((_,i)=>opt(i+1)).join('');$('f-h').value='8';$('f-m').innerHTML=['00','10','20','30','40','50'].map(x=>opt(x)).join('')}
-function initForm(){initTime();const k=S.kind;$('tf-t').textContent='نشر رحلة '+(k=='internal'?'داخلية':'خارجية');$('f-dest').innerHTML=DEST[k].map(x=>opt(x)).join('')+opt('__o','أخرى (اكتب الوجهة)');fCity()}
-function fCity(){const ex=S.kind=='external',o=$('f-dest').value=='__o';$('f-ow').hidden=!o;$('f-cw').hidden=!ex||o;if(ex&&!o)$('f-city').innerHTML=(CITY[$('f-dest').value]||[]).map(x=>opt(x)).join('')}
+function initForm(){initTime();const k=S.kind;$('tf-t').textContent='نشر رحلة '+(k=='internal'?'داخلية':'خارجية');$('f-dest').innerHTML=DEST[k].map(x=>opt(x)).join('');fCity()}
+function fCity(){const ex=S.kind=='external';$('f-cw').hidden=!ex;if(ex)$('f-city').innerHTML=(CITY[$('f-dest').value]||[]).map(x=>opt(x)).join('')}
 $('f-dest').onchange=fCity;
 $('tf').onsubmit=e=>{e.preventDefault();const dp=$('f-day').value.split('-').map(Number),at=new Date(dp[0],dp[1]-1,dp[2],(+$('f-h').value%12)+($('f-ap').value=='pm'?12:0),+$('f-m').value).getTime(),m=S.me;
-  if(!act(m)||!m.services||!m.services[S.kind])return msg('f-err','الحساب غير مفعّل لهذه الخدمة.');if(!at||at<=Date.now())return msg('f-err','اختر موعداً قادماً.');if(!$('f-veh').value.trim())return msg('f-err','اكتب نوع السيارة.');const dv=$('f-dest').value=='__o'?$('f-od').value.trim():$('f-dest').value;if(!dv)return msg('f-err','اكتب الوجهة.');
-  msg('f-err','');const t={kind:S.kind,dest:dv,city:S.kind=='external'&&$('f-dest').value!='__o'?$('f-city').value:'',at,seats:Math.max(1,Math.min(8,+$('f-seats').value||1)),veh:$('f-veh').value.trim(),note:$('f-note').value.trim(),ph:S.ph,name:m.name,end:m.end};
-  db.ref('trips').push(t).then(()=>{S.dest=t.dest;$('f-note').value='';$('f-od').value='';toast('تم نشر رحلتك')}).catch(e=>msg('f-err','تعذر النشر: '+e.code))};
+  if(!act(m)||!m.services||!m.services[S.kind])return msg('f-err','الحساب غير مفعّل لهذه الخدمة.');if(!at||at<=Date.now())return msg('f-err','اختر موعداً قادماً.');if(!$('f-veh').value.trim())return msg('f-err','اكتب نوع السيارة.');
+  msg('f-err','');const t={kind:S.kind,dest:$('f-dest').value,city:S.kind=='external'?$('f-city').value:'',at,seats:Math.max(1,Math.min(8,+$('f-seats').value||1)),veh:$('f-veh').value.trim(),note:$('f-note').value.trim(),ph:S.ph,name:m.name,end:m.end};
+  db.ref('trips').push(t).then(()=>{S.dest=t.dest;$('f-note').value='';toast('تم نشر رحلتك')}).catch(e=>msg('f-err','تعذر النشر: '+e.code))};
 /* ---------- admin ---------- */
 const plans=()=>{const c=$('n-plan').value||1;$('n-plan').innerHTML=[1,3,6,12].map(p=>opt(p,PL[p]+' ('+FEE[p]+' ريال)')).join('');$('n-plan').value=c;$('n-fee').value=FEE[c]};plans();$('n-plan').onchange=function(){$('n-fee').value=FEE[this.value]};
 db.ref('settings/fees').on('value',s=>{const v=s.val()||{};[1,3,6,12].forEach(p=>{if(v['m'+p]>=0){FEE[p]=v['m'+p]}$('fe-'+p).value=FEE[p]});plans();render()});
@@ -191,20 +210,20 @@ function drawMap(live){if(!window.L||S.tab!='c')return;
 function go(n){location.hash=n;render()}
 function render(){
   const h=location.hash.slice(1),scr=['tuktuk','internal','external','admin'].includes(h)?h:'home';
-  if(scr=='internal'||scr=='external'){if(S.kind!=scr){S.kind=scr;S.dest=DEST[scr][0];initForm()}}
+  if(scr=='internal'||scr=='external'){if(S.kind!=scr||!DEST[scr].includes(S.dest)){S.kind=scr;S.dest=DEST[scr][0];initForm()}}
   if(S.scr!=scr){S.scr=scr;S.tab='c';scrollTo(0,0)}
   $('s-home').hidden=scr!='home';$('s-tuktuk').hidden=scr!='tuktuk';$('s-trips').hidden=!/internal|external/.test(scr);$('s-admin').hidden=scr!='admin';
   const now=Date.now(),live=Object.values(S.drivers).filter(d=>d.status!='off'&&d.end>now),okT=k=>Object.keys(S.trips).map(i=>Object.assign({id:i},S.trips[i])).filter(t=>t.kind==k&&t.seats>0&&t.at>now&&t.end>now);
   if(scr=='home'){$('h-tk').textContent=live.filter(d=>d.status=='free').length+' متفرغ الآن';$('h-in').textContent='رحلات قادمة: '+okT('internal').length;$('h-ex').textContent='رحلات قادمة: '+okT('external').length}
   [...document.querySelectorAll('[data-tabs]')].forEach(t=>[...t.children].forEach(b=>b.setAttribute('aria-selected',b.dataset.t==S.tab)));
-  if(scr=='tuktuk'){const c=S.tab=='c';$('tk-c').hidden=!c;$('tk-d').hidden=c;
+  if(scr=='tuktuk'){const c=S.tab=='c';$('tk-c').hidden=!c;$('tk-d').hidden=c;rideUI();
     live.forEach(d=>d.m=S.pos&&d.lat!=null?dist(S.pos,d):null);live.sort((x,y)=>(x.status=='free'?0:1)-(y.status=='free'?0:1)||(x.m==null?1e12:x.m)-(y.m==null?1e12:y.m));
     $('tk-list').innerHTML=live.map(d=>`<div class="row"><div class="top"><div class="nm">${esc(d.name)}<div class="meta">تكتك رقم ${esc(d.tuk)}</div>${d.lat!=null&&now-d.ts>12e4?`<div class="meta">آخر موقع معروف ${ago(now-d.ts)}</div>`:''}${d.note?`<div class="note">${d.note.mode=='at'?'الآن في: ':d.note.mode=='to'?'متجه إلى: ':''}${esc(d.note.text)}</div>`:''}</div><span class="pill ${d.status}">${d.status=='free'?'متفرغ':'مشغول'}</span><div class="dist">${d.m!=null?fd(d.m):''}</div></div><div class="acts">${contact(d.phone)}${d.lat!=null?`<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${d.lat},${d.lng}">الخريطة</a>`:''}</div></div>`).join('')||'<div class="empty">لا يوجد تكتك متصل الآن.</div>';
     try{drawMap(live)}catch(e){console.error(e)}$('tk-login').hidden=!!S.ph;$('tk-panel').hidden=!S.ph;
     if(S.ph&&S.me){const s=sb(S.me),c2=mine(),ok=!!(S.me.services&&S.me.services.tuktuk);$('tk-no').hidden=ok;document.querySelectorAll('.tkc').forEach(e=>e.hidden=!ok);if(c2&&ok)geo(true);$('tk-name').textContent=S.me.name+(S.me.tukNo?' · تكتك رقم '+S.me.tukNo:'');$('tk-sub').className='sb '+s[0];$('tk-sub').textContent=s[1];
       [...$('tk-st').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.s==(c2?c2.status:'off')))}}
   if(/internal|external/.test(scr)){const c=S.tab=='c',k=S.kind,l=okT(k);$('tr-c').hidden=!c;$('tr-d').hidden=c;$('tr-title').textContent=k=='internal'?'الرحلات الداخلية':'الرحلات الخارجية';
-    const ds=DEST[k].concat([...new Set(l.map(t=>t.dest).filter(x=>!DEST[k].includes(x)))]);if(!ds.includes(S.dest))S.dest=ds[0];$('dests').innerHTML=ds.map(d=>`<button data-d="${esc(d)}" aria-pressed="${d==S.dest}"><b>${esc(d)}</b><br><span class="meta">${l.filter(t=>t.dest==d).length} رحلة</span></button>`).join('');$('tr-lt').textContent='المتاحون للسفر إلى '+S.dest;
+    $('dests').innerHTML=DEST[k].map(d=>`<button data-d="${d}" aria-pressed="${d==S.dest}"><b>${d}</b><br><span class="meta">${l.filter(t=>t.dest==d).length} رحلة</span></button>`).join('');$('tr-lt').textContent='المتاحون للسفر إلى '+S.dest;
     $('tr-list').innerHTML=l.filter(t=>t.dest==S.dest).sort((a,b)=>a.at-b.at).map(t=>`<div class="row"><div class="top"><div class="nm">${esc(t.name)}<div class="meta">${esc(t.veh)} · ${t.seats} مقاعد${t.city?' · إلى '+esc(t.city):''}</div>${t.note?`<div class="note">${esc(t.note)}</div>`:''}</div><div class="dist">${fT(t.at)}</div></div><div class="acts">${contact(t.ph)}</div></div>`).join('')||'<div class="empty">لا توجد رحلات لهذه الوجهة الآن.</div>';
     $('tr-login').hidden=!!S.ph;$('tr-panel').hidden=!S.ph;
     if(S.ph&&S.me){const s=sb(S.me),ok=!!(S.me.services&&S.me.services[k]);$('tr-no').hidden=ok;$('tf').hidden=!ok;$('my-t').hidden=!ok;$('my-list').hidden=!ok;$('tr-sub').className='sb '+s[0];$('tr-sub').textContent=s[1];
@@ -215,7 +234,7 @@ function render(){
       $('a-list').innerHTML=Object.values(S.members).filter(m=>!q||m.name.includes(q)||m.phone.includes(q)).sort((a,b)=>rk[mst(a)]-rk[mst(b)]||a.end-b.end).map(m=>{const s=mst(m),o=S.sel==m.phone;
         return `<div class="row${o?' sel':''}" data-id="${m.phone}"><div class="top" data-a="sel" style="cursor:pointer"><div class="nm">${esc(m.name)}<div class="meta">${Object.keys(m.services||{}).map(k=>SV[k]).join(' · ')}</div></div><span class="pill ${s}">${STL[s]}</span><div class="dist">${fD(m.end)}</div></div>`+
         (o?`<div class="detail form"><div class="kv"><span>الجوال</span><span class="ph">${esc(m.phone)}</span></div><div class="kv"><span>المركبة</span><span>${esc(m.veh||'')}</span></div>`+Object.values(m.payments||{}).sort((a,b)=>b.date-a.date).map(p=>`<div class="kv meta"><span>${fD(p.date)} · ${PL[p.months]}</span><span>${p.amount} ريال · سند ${esc(p.receipt)}</span></div>`).join('')+
-        `<div class="checks sv">${['tuktuk','internal','external'].map(k=>`<label><input type="checkbox" data-k="${k}"${m.services&&m.services[k]?' checked':''}>${SV[k]}</label>`).join('')}</div><button class="btn" data-a="svc">حفظ الخدمات</button><div class="f2"><select class="rn-plan">${[1,3,6,12].map(p=>opt(p,PL[p])).join('')}</select><input class="rn-fee" type="number" value="${FEE[1]}"></div><input class="rn-rec" placeholder="رقم سند القبض"><button class="btn p" data-a="renew">تجديد الاشتراك</button><div class="f2"><input class="pw-a" dir="ltr" placeholder="كلمة مرور جديدة (نسيها السائق)"><button class="btn" data-a="apw">تعيين كلمة المرور</button></div>${m.suspended?'<button class="btn" data-a="react">إعادة التفعيل</button>':'<button class="btn d" data-a="cancel">إلغاء الاشتراك</button>'}</div>`:'')+'</div>'}).join('')||'<div class="empty">لا يوجد سائقون.</div>'}}
+        `<div class="checks sv">${['tuktuk','internal','external'].map(k=>`<label><input type="checkbox" data-k="${k}"${m.services&&m.services[k]?' checked':''}>${SV[k]}</label>`).join('')}</div><button class="btn" data-a="svc">حفظ الخدمات</button><div class="f2"><select class="rn-plan">${[1,3,6,12].map(p=>opt(p,PL[p])).join('')}</select><input class="rn-fee" type="number" value="${FEE[1]}"></div><input class="rn-rec" placeholder="رقم سند القبض"><button class="btn p" data-a="renew">تجديد الاشتراك</button>${m.suspended?'<button class="btn" data-a="react">إعادة التفعيل</button>':'<button class="btn d" data-a="cancel">إلغاء الاشتراك</button>'}</div>`:'')+'</div>'}).join('')||'<div class="empty">لا يوجد سائقون.</div>'}}
 }
 document.addEventListener('change',e=>{if(e.target.classList.contains('rn-plan'))e.target.closest('.detail').querySelector('.rn-fee').value=FEE[e.target.value]});
 addEventListener('error',e=>toast('خطأ: '+e.message));if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));addEventListener('hashchange',render);setInterval(render,30000);initForm();render();
