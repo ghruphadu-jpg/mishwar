@@ -95,37 +95,46 @@ const opt=(v,l)=>`<option value="${esc(v)}">${esc(l==null?v:l)}</option>`;
 const sb=m=>{if(!m)return['bad','جارٍ التحميل...'];const s=mst(m);return s=='suspended'?['bad','تم إلغاء اشتراكك. راجع المكتب.']:s=='expired'?['bad','انتهى اشتراكك في '+fD(m.end)+'. جدّد عند المكتب.']:s=='soon'?['warn','ينتهي اشتراكك خلال '+days(m)+' يوم. جدّد عند المكتب.']:['','اشتراكك ساري حتى '+fD(m.end)]};
 let LS=[];
 /* ---------- ride requests + chat ---------- */
-Object.assign(S,{my:{},open:{},acc:{},dl:0,dn:0,chat:null});
+Object.assign(S,{my:{},open:{},acc:{},dl:0,dn:0,chat:null,un:{},so:{},soi:0,da:0,cw:'',lk:''});
 const fresh=r=>Date.now()-r.ts<72e5||r.status=='accepted';
 const ls=(q,f)=>{LS.push(q);q.on('value',s=>{f(s.val()||{});render()},()=>{})};
-function myRides(uid){ls(db.ref('rides').orderByChild('cid').equalTo(uid),v=>{S.my=v})}
+function myRides(uid){ls(db.ref('rides').orderByChild('cid').equalTo(uid),v=>{const n=[];Object.keys(v).forEach(i=>Object.keys(v[i].offers||{}).forEach(p=>{if(!S.so[i+p]){S.so[i+p]=1;n.push(1)}}));if(S.soi&&n.length)ping('وافق سائق على مشوارك','افتح التطبيق للرد');S.soi=1;S.my=v})}
 function drvRides(){if(S.dl||!S.ph||!act(S.me)||!(S.me.services&&S.me.services.tuktuk))return;S.dl=1;
-  ls(db.ref('rides').orderByChild('status').equalTo('open'),v=>{const n=Object.keys(v).filter(k=>!S.open[k]);if(S.dn&&n.length){toast('طلب مشوار جديد');navigator.vibrate&&navigator.vibrate(200)}S.open=v;S.dn=1});
-  ls(db.ref('rides').orderByChild('driver').equalTo(S.ph),v=>{S.acc=v})}
+  ls(db.ref('rides').orderByChild('status').equalTo('open'),v=>{const n=Object.keys(v).filter(k=>!S.open[k]);if(S.dn&&n.length){ping('طلب مشوار جديد','يوجد طلب جديد من عميل')}S.open=v;S.dn=1});
+  ls(db.ref('rides').orderByChild('driver').equalTo(S.ph),v=>{if(S.da&&Object.keys(v).some(k=>!S.acc[k]))ping('قبل العميل عرضك','يمكنك الآن الدردشة معه');S.da=1;S.acc=v})}
+let CL={};
+const seenK=id=>{try{return localStorage.getItem('seen_'+id)||''}catch(e){return ''}},seen=(id,k)=>{try{localStorage.setItem('seen_'+id,k)}catch(e){}};
+const beep=()=>{try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=880;o.start();o.stop(c.currentTime+.18)}catch(e){}};
+function sysn(t,b){try{if(window.Notification&&Notification.permission=='granted'){const o={body:b||'',icon:'icon-192.png',tag:'mishwar'};navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r?r.showNotification(t,o):new Notification(t,o)).catch(()=>{})}}catch(e){}}
+function ping(t,b){toast(t+(b?': '+b:''));navigator.vibrate&&navigator.vibrate([200,100,200]);beep();if(document.hidden)sysn(t,b)}
+function watchChats(){[[S.my,'c'],[S.acc,'d']].forEach(([o,w])=>Object.keys(o).forEach(id=>{if(CL[id]||o[id].status!='accepted')return;CL[id]=1;const q=db.ref('chats/'+id).limitToLast(1);LS.push(q);
+  q.on('child_added',s=>{const m=s.val();if(!m||(m.w?m.w==w:m.uid==auth.currentUser.uid))return;if(S.chat==id&&!document.hidden)return;if(s.key>seenK(id)){S.un[id]=1;ping('رسالة جديدة',String(m.text).slice(0,40));render()}},()=>{})}))}
+let asked=0;document.addEventListener('click',e=>{if(!asked&&e.target.closest('button')&&window.Notification&&Notification.permission=='default'){asked=1;Notification.requestPermission()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.chat){S.un[S.chat]=0;if(S.lk)seen(S.chat,S.lk);render()}});
 let cref=null;
-function openChat(id,w){closeChat();const r=(w=='c'?S.my:S.acc)[id]||{},o=(r.offers||{})[r.driver]||{};S.chat=id;
+function openChat(id,w){closeChat();const r=(w=='c'?S.my:S.acc)[id]||{},o=(r.offers||{})[r.driver]||{};S.chat=id;S.cw=w;S.un[id]=0;
   $('ct').textContent=w=='c'?'الدردشة مع السائق '+(o.name||''):'الدردشة مع '+(r.name||'العميل');$('chat').hidden=false;$('cmsgs').innerHTML='';
-  cref=db.ref('chats/'+id);cref.on('value',s=>{let h='';s.forEach(c=>{const m=c.val();h+=`<div class="bub${m.uid==auth.currentUser.uid?' me':''}">${esc(m.text)}</div>`});$('cmsgs').innerHTML=h;$('cmsgs').scrollTop=1e9},()=>toast('تعذر فتح الدردشة'))}
+  cref=db.ref('chats/'+id);cref.on('value',s=>{let h='',lk='';s.forEach(c=>{const m=c.val();lk=c.key;h+=`<div class="bub${(m.w?m.w==S.cw:m.uid==auth.currentUser.uid)?' me':''}">${esc(m.text)}</div>`});$('cmsgs').innerHTML=h;$('cmsgs').scrollTop=1e9;S.lk=lk;if(lk&&!document.hidden)seen(S.chat,lk)},()=>toast('تعذر فتح الدردشة'))}
 function closeChat(){if(cref){cref.off();cref=null}S.chat=null;$('chat').hidden=true}
 $('cx').onclick=closeChat;
-$('cf').onsubmit=e=>{e.preventDefault();const t=$('cin').value.trim();if(!t||!S.chat)return;$('cin').value='';db.ref('chats/'+S.chat).push({uid:auth.currentUser.uid,text:t,ts:firebase.database.ServerValue.TIMESTAMP}).catch(x=>toast('تعذر الإرسال: '+x.code))};
+$('cf').onsubmit=e=>{e.preventDefault();const t=$('cin').value.trim();if(!t||!S.chat)return;$('cin').value='';db.ref('chats/'+S.chat).push({uid:auth.currentUser.uid,w:S.cw,text:t,ts:firebase.database.ServerValue.TIMESTAMP}).catch(x=>toast('تعذر الإرسال: '+x.code))};
 $('rf').onsubmit=async e=>{e.preventDefault();const to=$('r-to').value.trim();if(!to)return msg('r-err','اكتب المكان الذي تريد الذهاب إليه.');msg('r-err','');
   try{if(!auth.currentUser)await auth.signInAnonymously();await db.ref('rides').push({cid:auth.currentUser.uid,name:$('r-name').value.trim()||'عميل',from:$('r-from').value.trim(),to,note:$('r-note').value.trim(),status:'open',ts:firebase.database.ServerValue.TIMESTAMP});e.target.reset();toast('تم إرسال طلبك للسائقين')}catch(x){msg('r-err','تعذر الإرسال: '+x.code)}};
 const rt=r=>`${esc(r.from||'—')} ← ${esc(r.to)}`;
-function rideUI(){const n=Date.now(),my=Object.keys(S.my).map(i=>Object.assign({id:i},S.my[i])).filter(fresh).sort((a,b)=>b.ts-a.ts);$('rq-new').hidden=my.length>0;
+function rideUI(){watchChats();if(S.chat&&!S.my[S.chat]&&!S.acc[S.chat])closeChat();const n=Date.now(),my=Object.keys(S.my).map(i=>Object.assign({id:i},S.my[i])).filter(fresh).sort((a,b)=>b.ts-a.ts);$('rq-new').hidden=my.length>0;
   $('rq-my').innerHTML=my.map(r=>{const of=Object.entries(r.offers||{}).filter(x=>x[1].status!='rejected'),o=(r.offers||{})[r.driver]||{};
     return `<div class="row" data-id="${r.id}"><div class="top"><div class="nm">${rt(r)}<div class="meta">${ago(n-r.ts)}</div></div><span class="pill ${r.status=='open'?'soon':'free'}">${r.status=='open'?'بانتظار السائقين':'تمت الموافقة'}</span></div>`+
-    (r.status=='accepted'?`<div class="sb">السائق ${esc(o.name||'')}${o.tuk?' · تكتك '+esc(o.tuk):''} ${rate(r.driver)}</div>${rateRow(r)}<div class="acts"><button class="btn p" data-a="chat" data-w="c">💬 دردشة</button><button class="btn d" data-a="cancelRide">إنهاء</button></div>`:
+    (r.status=='accepted'?`<div class="sb">السائق ${esc(o.name||'')}${o.tuk?' · تكتك '+esc(o.tuk):''} ${rate(r.driver)}</div>${rateRow(r)}<div class="acts"><button class="btn p" data-a="chat" data-w="c">💬 دردشة${S.un[r.id]?' 🔴':''}</button><button class="btn d" data-a="cancelRide">إنهاء</button></div>`:
     (of.map(x=>`<div class="sb"><b>${esc(x[1].name)}</b>${x[1].tuk?' · تكتك '+esc(x[1].tuk):''} ${rate(x[0])} يوافق على مشوارك<div class="acts" style="margin-top:6px"><button class="btn p" data-a="okOffer" data-p="${x[0]}">قبول</button><button class="btn" data-a="noOffer" data-p="${x[0]}">رفض</button></div></div>`).join('')||'<div class="hint">لم يوافق أحد بعد، ابقَ في الصفحة.</div>')+'<div class="acts"><button class="btn d" data-a="cancelRide">إلغاء الطلب</button></div>')+'</div>'}).join('');
   if(S.ph&&S.me){const mk=k=>(o)=>Object.keys(o).map(i=>Object.assign({id:i},o[i])),op=mk()(S.open).filter(fresh).sort((a,b)=>b.ts-a.ts),ac=mk()(S.acc);
-    $('dr-rides').innerHTML=ac.map(r=>`<div class="row" data-id="${r.id}"><div class="top"><div class="nm">${esc(r.name)}<div class="meta">${rt(r)}</div></div><span class="pill free">مقبول</span></div><div class="acts"><button class="btn p" data-a="chat" data-w="d">💬 دردشة</button></div></div>`).join('')+
+    $('dr-rides').innerHTML=ac.map(r=>`<div class="row" data-id="${r.id}"><div class="top"><div class="nm">${esc(r.name)}<div class="meta">${rt(r)}</div></div><span class="pill free">مقبول</span></div><div class="acts"><button class="btn p" data-a="chat" data-w="d">💬 دردشة${S.un[r.id]?' 🔴':''}</button></div></div>`).join('')+
     op.map(r=>{const o=(r.offers||{})[S.ph];return `<div class="row" data-id="${r.id}"><div class="top"><div class="nm">${esc(r.name)}<div class="meta">${rt(r)} · ${ago(n-r.ts)}</div>${r.note?`<div class="note">${esc(r.note)}</div>`:''}</div></div><div class="acts">${!o?'<button class="btn p" data-a="offer">أستطيع القيام بالمشوار</button>':o.status=='rejected'?'<span class="pill busy">رفض العميل عرضك</span>':'<span class="pill soon">بانتظار رد العميل</span><button class="btn" data-a="unoffer">سحب</button>'}</div></div>`}).join('')||'<div class="empty">لا توجد طلبات الآن.</div>'}}
 S.rts={};db.ref('ratings').on('value',s=>{S.rts=s.val()||{};render()},()=>{});
 const rate=ph=>{const o=Object.values(S.rts[ph]||{});return o.length?`⭐ ${(o.reduce((a,x)=>a+x.s,0)/o.length).toFixed(1)} (${o.length})`:''};
 const rateRow=r=>{const m=(S.rts[r.driver]||{})[r.id];return m?`<div class="hint">تقييمك للسائق: ${'⭐'.repeat(m.s)}</div>`:`<div class="hint">قيّم السائق:</div><div class="acts">${[1,2,3,4,5].map(n=>`<button class="btn" data-a="star" data-n="${n}" data-p="${r.driver}">${n}⭐</button>`).join('')}</div>`};
 /* ---------- auth ---------- */
 auth.onAuthStateChanged(async u=>{
-  LS.forEach(r=>r.off());LS=[];S.ph=null;S.me=null;S.admin=false;S.members={};geo(false);S.my={};S.open={};S.acc={};S.dl=0;S.dn=0;closeChat();if(u)myRides(u.uid);
+  LS.forEach(r=>r.off());LS=[];S.ph=null;S.me=null;S.admin=false;S.members={};geo(false);S.my={};S.open={};S.acc={};S.dl=0;S.dn=0;S.da=0;S.so={};S.soi=0;S.un={};CL={};closeChat();if(u)myRides(u.uid);
   if(u&&u.email&&u.email.endsWith('@tuk.local')){S.ph=u.email.replace('@tuk.local','');const r=db.ref('members/'+S.ph);LS.push(r);
     r.on('value',s=>{S.me=s.val();if(!S.me){toast('رقمك غير مسجل لدى المكتب');auth.signOut();return}drvRides();render()},e=>toast('تعذر قراءة حسابك: '+e.code))}
   else if(u&&u.email){let s;try{s=await db.ref('admin').once('value')}catch(e){toast('تعذر قراءة الصلاحيات: '+e.code);auth.signOut();return}S.admin=s.val()===u.uid;
