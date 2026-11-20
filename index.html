@@ -66,7 +66,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px;fl
 <div class="f2"><label class="fld">المركبة<input id="n-veh" maxlength="40"></label><label class="fld">رقم التكتك<input id="n-tuk" inputmode="numeric"></label></div>
 <div class="f2"><label class="fld">المدة<select id="n-plan"></select></label><label class="fld">المبلغ (ريال)<input id="n-fee" type="number" min="0" step="500"></label></div>
 <label class="fld">رقم سند القبض<input id="n-rec"></label><p class="err" id="n-err" hidden></p><button class="btn p">تسجيل وفتح الحساب</button></form></section>
-</div><div class="chat" id="chat" hidden><header><b id="ct"></b><button class="back" id="cx">إغلاق</button></header><div id="cmsgs"></div><form id="cf"><input id="cin" maxlength="500" placeholder="اكتب رسالة..." autocomplete="off"><button class="btn p" style="flex:none">إرسال</button></form></div><div class="toast" id="toast"></div>
+</div><p class="hint" style="text-align:center;margin:20px">الإصدار 3</p><div class="chat" id="chat" hidden><header><b id="ct"></b><button class="back" id="cx">إغلاق</button></header><div id="cmsgs"></div><form id="cf"><input id="cin" maxlength="500" placeholder="اكتب رسالة..." autocomplete="off"><button class="btn p" style="flex:none">إرسال</button></form></div><div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -221,7 +221,7 @@ function drawMap(live){if(!window.L||S.tab!='c')return;
   if(S.pos){if(meM)meM.setLatLng([S.pos.lat,S.pos.lng]);else meM=L.circleMarker([S.pos.lat,S.pos.lng],{radius:8,color:'#2b3a8c'}).addTo(map)}}
 /* ---------- render ---------- */
 function go(n){location.hash=n;render()}
-function render(){
+function render(){try{watchChats()}catch(e){console.error(e)}
   const h=location.hash.slice(1),scr=['tuktuk','internal','external','admin'].includes(h)?h:'home';
   if(scr=='internal'||scr=='external'){if(S.kind!=scr||!DEST[scr].includes(S.dest)){S.kind=scr;S.dest=DEST[scr][0];initForm()}}
   if(S.scr!=scr){S.scr=scr;S.tab='c';scrollTo(0,0)}
