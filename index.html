@@ -66,7 +66,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px;fl
 <div class="f2"><label class="fld">المركبة<input id="n-veh" maxlength="40"></label><label class="fld">رقم التكتك<input id="n-tuk" inputmode="numeric"></label></div>
 <div class="f2"><label class="fld">المدة<select id="n-plan"></select></label><label class="fld">المبلغ (ريال)<input id="n-fee" type="number" min="0" step="500"></label></div>
 <label class="fld">رقم سند القبض<input id="n-rec"></label><p class="err" id="n-err" hidden></p><button class="btn p">تسجيل وفتح الحساب</button></form></section>
-</div><p class="hint" style="text-align:center;margin:20px">الإصدار 3</p><div class="chat" id="chat" hidden><header><b id="ct"></b><button class="back" id="cx">إغلاق</button></header><div id="cmsgs"></div><form id="cf"><input id="cin" maxlength="500" placeholder="اكتب رسالة..." autocomplete="off"><button class="btn p" style="flex:none">إرسال</button></form></div><div class="toast" id="toast"></div>
+</div><p class="hint" style="text-align:center;margin:20px">الإصدار 4</p><div class="chat" id="chat" hidden><header><b id="ct"></b><button class="back" id="cx">إغلاق</button></header><div id="cmsgs"></div><form id="cf"><input id="cin" maxlength="500" placeholder="اكتب رسالة..." autocomplete="off"><button class="btn p" style="flex:none">إرسال</button></form></div><div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -103,18 +103,18 @@ function drvRides(){if(S.dl||!S.ph||!act(S.me)||!(S.me.services&&S.me.services.t
   ls(db.ref('rides').orderByChild('status').equalTo('open'),v=>{const n=Object.keys(v).filter(k=>!S.open[k]);if(S.dn&&n.length){ping('طلب مشوار جديد','يوجد طلب جديد من عميل')}S.open=v;S.dn=1});
   ls(db.ref('rides').orderByChild('driver').equalTo(S.ph),v=>{if(S.da&&Object.keys(v).some(k=>!S.acc[k]))ping('قبل العميل عرضك','يمكنك الآن الدردشة معه');S.da=1;S.acc=v})}
 let CL={};
-const seenK=id=>{try{return localStorage.getItem('seen_'+id)||''}catch(e){return ''}},seen=(id,k)=>{try{localStorage.setItem('seen_'+id,k)}catch(e){}};
+const seenK=(id,w)=>{try{return localStorage.getItem('seen_'+w+id)||''}catch(e){return ''}},seen=(id,k,w)=>{try{localStorage.setItem('seen_'+w+id,k)}catch(e){}};
 const beep=()=>{try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=880;o.start();o.stop(c.currentTime+.18)}catch(e){}};
 function sysn(t,b){try{if(window.Notification&&Notification.permission=='granted'){const o={body:b||'',icon:'icon-192.png',tag:'mishwar'};navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r?r.showNotification(t,o):new Notification(t,o)).catch(()=>{})}}catch(e){}}
 function ping(t,b){toast(t+(b?': '+b:''));navigator.vibrate&&navigator.vibrate([200,100,200]);beep();if(document.hidden)sysn(t,b)}
 function watchChats(){[[S.my,'c'],[S.acc,'d']].forEach(([o,w])=>Object.keys(o).forEach(id=>{if(CL[id]||o[id].status!='accepted')return;CL[id]=1;const q=db.ref('chats/'+id).limitToLast(1);LS.push(q);
-  q.on('child_added',s=>{const m=s.val();if(!m||(m.w?m.w==w:m.uid==auth.currentUser.uid))return;if(S.chat==id&&!document.hidden)return;if(s.key>seenK(id)){S.un[id]=1;ping('رسالة جديدة',String(m.text).slice(0,40));render()}},()=>{})}))}
+  q.on('child_added',s=>{const m=s.val();if(!m||(m.w?m.w==w:m.uid==auth.currentUser.uid))return;if(S.chat==id&&!document.hidden)return;if(s.key>seenK(id,w)){S.un[id]=1;ping('رسالة جديدة',String(m.text).slice(0,40));render()}},()=>{})}))}
 let asked=0;document.addEventListener('click',e=>{if(!asked&&e.target.closest('button')&&window.Notification&&Notification.permission=='default'){asked=1;Notification.requestPermission()}});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.chat){S.un[S.chat]=0;if(S.lk)seen(S.chat,S.lk);render()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.chat){S.un[S.chat]=0;if(S.lk)seen(S.chat,S.lk,S.cw);render()}});
 let cref=null;
 function openChat(id,w){closeChat();const r=(w=='c'?S.my:S.acc)[id]||{},o=(r.offers||{})[r.driver]||{};S.chat=id;S.cw=w;S.un[id]=0;
   $('ct').textContent=w=='c'?'الدردشة مع السائق '+(o.name||''):'الدردشة مع '+(r.name||'العميل');$('chat').hidden=false;$('cmsgs').innerHTML='';
-  cref=db.ref('chats/'+id);cref.on('value',s=>{let h='',lk='';s.forEach(c=>{const m=c.val();lk=c.key;h+=`<div class="bub${(m.w?m.w==S.cw:m.uid==auth.currentUser.uid)?' me':''}">${esc(m.text)}</div>`});$('cmsgs').innerHTML=h;$('cmsgs').scrollTop=1e9;S.lk=lk;if(lk&&!document.hidden)seen(S.chat,lk)},()=>toast('تعذر فتح الدردشة'))}
+  cref=db.ref('chats/'+id);cref.on('value',s=>{let h='',lk='';s.forEach(c=>{const m=c.val();lk=c.key;h+=`<div class="bub${(m.w?m.w==S.cw:m.uid==auth.currentUser.uid)?' me':''}">${esc(m.text)}</div>`});$('cmsgs').innerHTML=h;$('cmsgs').scrollTop=1e9;S.lk=lk;if(lk&&!document.hidden)seen(S.chat,lk,S.cw)},()=>toast('تعذر فتح الدردشة'))}
 function closeChat(){if(cref){cref.off();cref=null}S.chat=null;$('chat').hidden=true}
 $('cx').onclick=closeChat;
 $('cf').onsubmit=e=>{e.preventDefault();const t=$('cin').value.trim();if(!t||!S.chat)return;$('cin').value='';db.ref('chats/'+S.chat).push({uid:auth.currentUser.uid,w:S.cw,text:t,ts:firebase.database.ServerValue.TIMESTAMP}).catch(x=>toast('تعذر الإرسال: '+x.code))};
