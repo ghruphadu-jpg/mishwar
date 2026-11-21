@@ -2,8 +2,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="color-scheme" content="light dark">
 <title>المواصلات في سيئون</title>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b7a5a" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0a100e" media="(prefers-color-scheme: dark)"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600&family=Reem+Kufi:wght@500;700&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600&family=Reem+Kufi:wght@500;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" media="print" onload="this.media='all'">
 <style>
 :root{--bg:#f2f5f4;--s:#fff;--ink:#0f1b17;--mut:#5f6f69;--ln:#e3eae7;--ac:#0b7a5a;--on:#fff;--ok:#0b7a5a;--bad:#d6453d;--warn:#b26a00;--fill:#f0f4f2;--sh:0 1px 2px rgba(16,40,32,.06),0 10px 28px rgba(16,40,32,.08);--hero:linear-gradient(135deg,#0b7a5a 0%,#0f9d74 55%,#12b886 100%)}
 @media(prefers-color-scheme:dark){:root{--bg:#0a100e;--s:#121a17;--ink:#e8f1ed;--mut:#93a59e;--ln:#22302b;--ac:#2fd3a0;--on:#052a1f;--ok:#2fd3a0;--bad:#ff7b72;--warn:#f2b84b;--fill:#1a2521;--sh:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.35);--hero:linear-gradient(135deg,#0b5e47,#0d7a5c 60%,#10936f)}}
@@ -99,15 +99,19 @@ body{background-color:var(--bg);background-image:none}
 <div class="f2"><label class="fld">المركبة<input id="n-veh" maxlength="40"></label><label class="fld">رقم التكتك<input id="n-tuk" inputmode="numeric"></label></div>
 <div class="f2"><label class="fld">المدة<select id="n-plan"></select></label><label class="fld">المبلغ (ريال)<input id="n-fee" type="number" min="0" step="500"></label></div>
 <label class="fld">رقم سند القبض<input id="n-rec"></label><p class="err" id="n-err" hidden></p><button class="btn p">تسجيل وفتح الحساب</button></form></section>
-</div><p class="hint" style="text-align:center;margin:20px">الإصدار 13</p><div class="chat" id="chat" hidden><header><b id="ct"></b><button class="back" id="cx">إغلاق</button></header><div id="cmsgs"></div><form id="cf"><button type="button" class="btn" id="mx" hidden>✖</button><span id="rs" hidden>● يسجّل <b id="rt">0:00</b></span><input id="cin" maxlength="500" placeholder="اكتب رسالة..." autocomplete="off"><button type="button" class="btn" id="mic">🎤</button><button class="btn p" id="sd">إرسال</button></form></div><div class="toast" id="toast"></div>
+</div><p class="hint" style="text-align:center;margin:20px">الإصدار 14</p><div class="chat" id="chat" hidden><header><b id="ct"></b><button class="back" id="cx">إغلاق</button></header><div id="cmsgs"></div><form id="cf"><button type="button" class="btn" id="mx" hidden>✖</button><span id="rs" hidden>● يسجّل <b id="rt">0:00</b></span><input id="cin" maxlength="500" placeholder="اكتب رسالة..." autocomplete="off"><button type="button" class="btn" id="mic">🎤</button><button class="btn p" id="sd">إرسال</button></form></div><div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" onload="try{render()}catch(e){}"></script>
+<script>if(!window.firebase){document.addEventListener("DOMContentLoaded",function(){document.body.insertAdjacentHTML("afterbegin","<div style=\"padding:20px;text-align:center;font-size:16px\">تعذر تحميل خدمات التطبيق من الإنترنت.<br>أوقف الـVPN أو جرّب شبكة أخرى ثم <button onclick=\"location.reload()\" style=\"padding:8px 16px;border-radius:10px\">أعد المحاولة</button></div>")})}</script>
 <script>
 firebase.initializeApp({apiKey:"AIzaSyDfW7QhCSmDoTsgr9EgjtiO2MyhWoZZVb4",authDomain:"mishwar-1d868.firebaseapp.com",databaseURL:"https://mishwar-1d868-default-rtdb.firebaseio.com",projectId:"mishwar-1d868",storageBucket:"mishwar-1d868.firebasestorage.app",messagingSenderId:"1089490145219",appId:"1:1089490145219:web:5edc0f64171030806bf776"});
 const auth=firebase.auth(),db=firebase.database(),$=id=>document.getElementById(id);
+(function(){const b=document.createElement('div');b.style.cssText='position:fixed;top:0;inset-inline:0;z-index:99;background:#b26a00;color:#fff;text-align:center;padding:6px 10px;font-size:13px;display:none';b.textContent='جارٍ الاتصال بالخادم... تأكد من الإنترنت';document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(b));
+let t1=0,t2=0;db.ref('.info/connected').on('value',s=>{clearTimeout(t1);clearTimeout(t2);if(s.val()){b.style.display='none';return}
+t1=setTimeout(()=>{b.style.display='block'},3000);t2=setTimeout(()=>{try{db.goOffline();setTimeout(()=>db.goOnline(),400)}catch(e){}},12000)})})();
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const VT='🎤 رسالة صوتية ',VD=t=>typeof t=='string'&&t.indexOf(VT)==0?(+t.slice(VT.length)||1):0,OTH='__other',DEST={internal:['المكلا','عدن','العبر','تريم','عتق','الغيضة'],external:['السعودية','عمان']};
 const CITY={'السعودية':['الرياض','جدة','نجران','الدمام'],'عمان':['صلالة','مسقط']};
@@ -227,7 +231,7 @@ const A={
   okOffer(b){const id=b.closest('[data-id]').dataset.id,p=b.dataset.p,u={status:'accepted',driver:p};u['offers/'+p+'/status']='accepted';db.ref('rides/'+id).update(u).then(()=>openChat(id,'c')).catch(e=>toast('تعذر القبول: '+e.code))},
   hide(b){const id=b.closest('[data-id]').dataset.id;HID.push(id);try{localStorage.setItem('hid',JSON.stringify(HID.slice(-200)))}catch(e){}render()},
   noOffer(b){db.ref('rides/'+b.closest('[data-id]').dataset.id+'/offers/'+b.dataset.p+'/status').set('rejected')},
-  cancelRide(b){const id=b.closest('[data-id]').dataset.id;if(!confirm('إنهاء الطلب؟'))return;closeChat();db.ref('rides/'+id).remove().then(()=>{toast('تم حذف الطلب');db.ref('chats/'+id).remove().catch(()=>{});db.ref('voices/'+id).remove().catch(()=>{})}).catch(e=>toast('تعذر حذف الطلب: '+e.code))},
+  cancelRide(b){const id=b.closest('[data-id]').dataset.id;if(!confirm('إنهاء الطلب؟'))return;closeChat();Promise.all([db.ref('chats/'+id).remove().catch(()=>{}),db.ref('voices/'+id).remove().catch(()=>{})]).then(()=>db.ref('rides/'+id).remove()).then(()=>toast('تم حذف الطلب')).catch(e=>toast('تعذر حذف الطلب: '+e.code,6000))},
   chat(b){openChat(b.closest('[data-id]').dataset.id,b.dataset.w)},
   async login(b){const bx=b.closest('.login'),p=norm(bx.querySelector('.lg-ph').value),pw=bx.querySelector('.lg-pw').value;if(!/^7\d{8}$/.test(p))return lerr(bx,'اكتب 9 أرقام تبدأ بالرقم 7.');if(!pw)return lerr(bx,'اكتب كلمة المرور.');
     try{await auth.setPersistence(bx.querySelector('.lg-rm').checked?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);let em=p+'@tuk.local';try{const a=await db.ref('acct/'+p).once('value');if(a.val())em=a.val()}catch(x){}await auth.signInWithEmailAndPassword(em,pw);lerr(bx,'')}catch(e){lerr(bx,e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'||e.code=='auth/user-not-found'?'الرقم أو كلمة المرور غير صحيحة':'تعذر الدخول: '+e.code)}},
