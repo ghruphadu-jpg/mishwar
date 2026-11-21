@@ -1,25 +1,168 @@
 {
-  "rules": {
-    "admin": { ".read": "auth != null", ".write": false },
-    "settings": { ".read": true, ".write": "auth != null && root.child('admin').val() === auth.uid" },
-    "members": {
-      ".read": "auth != null && root.child('admin').val() === auth.uid",
-      ".write": "auth != null && root.child('admin').val() === auth.uid",
-      "$ph": { ".read": "auth.token.email != null && auth.token.email.replace('@tuk.local','') === $ph" }
+ "rules": {
+  "admin": {
+   ".read": "auth != null",
+   ".write": false
+  },
+  "settings": {
+   ".read": true,
+   ".write": "auth != null && root.child('admin').val() === auth.uid"
+  },
+  "acct": {
+   ".read": true,
+   ".write": "auth != null && root.child('admin').val() === auth.uid"
+  },
+  "members": {
+   ".read": "auth != null && root.child('admin').val() === auth.uid",
+   ".write": "auth != null && root.child('admin').val() === auth.uid",
+   "$ph": {
+    ".read": "auth.token.email != null && auth.token.email.substring(0,9) === $ph && (root.child('acct/'+$ph).val() === auth.token.email || (!root.child('acct/'+$ph).exists() && auth.token.email === $ph+'@tuk.local'))"
+   }
+  },
+  "drivers": {
+   ".read": true,
+   "$ph": {
+    ".write": "auth != null && (root.child('admin').val() === auth.uid || (auth.token.email != null && auth.token.email.substring(0,9) === $ph && (root.child('acct/'+$ph).val() === auth.token.email || (!root.child('acct/'+$ph).exists() && auth.token.email === $ph+'@tuk.local')) && root.child('members/'+$ph+'/end').val() > now && root.child('members/'+$ph+'/suspended').val() != true && (root.child('members/'+$ph+'/services/tuktuk').val() === 1 || root.child('members/'+$ph+'/services/bus').val() === 1 || root.child('members/'+$ph+'/services/taxi').val() === 1 || root.child('members/'+$ph+'/services/transport').val() === 1)))",
+    ".validate": "newData.hasChildren(['phone','name','status','end','ts']) && (newData.child('status').val() === 'free' || newData.child('status').val() === 'busy') && newData.child('end').val() === root.child('members/'+$ph+'/end').val()"
+   }
+  },
+  "trips": {
+   ".read": true,
+   "$id": {
+    ".write": "auth != null && (root.child('admin').val() === auth.uid || (auth.token.email != null && (root.child('acct/'+auth.token.email.substring(0,9)).val() === auth.token.email || (!root.child('acct/'+auth.token.email.substring(0,9)).exists() && auth.token.email === auth.token.email.substring(0,9)+'@tuk.local')) && root.child('members/'+auth.token.email.substring(0,9)+'/end').val() > now && root.child('members/'+auth.token.email.substring(0,9)+'/suspended').val() != true && (!data.exists() || data.child('ph').val() === auth.token.email.substring(0,9))))",
+    ".validate": "newData.hasChildren(['kind','dest','at','seats','ph','name','end']) && newData.child('ph').val() === auth.token.email.substring(0,9) && (newData.child('kind').val() === 'internal' || newData.child('kind').val() === 'external') && root.child('members/'+newData.child('ph').val()+'/services/'+newData.child('kind').val()).val() === 1 && newData.child('seats').isNumber() && newData.child('seats').val() >= 0 && newData.child('seats').val() <= 8 && newData.child('end').val() === root.child('members/'+newData.child('ph').val()+'/end').val()"
+   }
+  },
+  "rides": {
+   ".indexOn": [
+    "cid",
+    "status",
+    "driver"
+   ],
+   ".read": "auth != null && ((query.orderByChild == 'cid' && query.equalTo == auth.uid) || (auth.token.email != null && (root.child('acct/'+auth.token.email.substring(0,9)).val() === auth.token.email || (!root.child('acct/'+auth.token.email.substring(0,9)).exists() && auth.token.email === auth.token.email.substring(0,9)+'@tuk.local')) && root.child('members/'+auth.token.email.substring(0,9)+'/end').val() > now && root.child('members/'+auth.token.email.substring(0,9)+'/suspended').val() != true))",
+   "$id": {
+    ".write": "auth != null && ((!data.exists() && newData.child('cid').val() === auth.uid) || data.child('cid').val() === auth.uid)",
+    ".validate": "newData.hasChildren(['cid','kind','to','status','ts'])",
+    "cid": {
+     ".validate": true
     },
-    "drivers": {
-      ".read": true,
-      "$ph": {
-        ".write": "auth != null && (root.child('admin').val() === auth.uid || (auth.token.email != null && auth.token.email.replace('@tuk.local','') === $ph && root.child('members/'+$ph+'/end').val() > now && root.child('members/'+$ph+'/suspended').val() != true && root.child('members/'+$ph+'/services/tuktuk').val() === 1))",
-        ".validate": "newData.hasChildren(['phone','name','status','end','ts']) && (newData.child('status').val() === 'free' || newData.child('status').val() === 'busy') && newData.child('end').val() === root.child('members/'+$ph+'/end').val()"
-      }
+    "ts": {
+     ".validate": true
     },
-    "trips": {
-      ".read": true,
-      "$id": {
-        ".write": "auth != null && (root.child('admin').val() === auth.uid || (auth.token.email != null && root.child('members/'+auth.token.email.replace('@tuk.local','')+'/end').val() > now && root.child('members/'+auth.token.email.replace('@tuk.local','')+'/suspended').val() != true && (!data.exists() || data.child('ph').val() === auth.token.email.replace('@tuk.local',''))))",
-        ".validate": "newData.hasChildren(['kind','dest','at','seats','ph','name','end']) && newData.child('ph').val() === auth.token.email.replace('@tuk.local','') && (newData.child('kind').val() === 'internal' || newData.child('kind').val() === 'external') && root.child('members/'+newData.child('ph').val()+'/services/'+newData.child('kind').val()).val() === 1 && newData.child('dest').isString() && newData.child('dest').val().length <= 40 && newData.child('seats').isNumber() && newData.child('seats').val() >= 0 && newData.child('seats').val() <= 8 && newData.child('end').val() === root.child('members/'+newData.child('ph').val()+'/end').val()"
+    "driver": {
+     ".validate": "newData.isString() && newData.val().length <= 15"
+    },
+    "name": {
+     ".validate": "newData.isString() && newData.val().length <= 30"
+    },
+    "from": {
+     ".validate": "newData.isString() && newData.val().length <= 60"
+    },
+    "to": {
+     ".validate": "newData.isString() && newData.val().length <= 80"
+    },
+    "when": {
+     ".validate": "newData.isString() && newData.val().length <= 40"
+    },
+    "note": {
+     ".validate": "newData.isString() && newData.val().length <= 60"
+    },
+    "kind": {
+     ".validate": "newData.val() === 'ride' || newData.val() === 'tuktuk' || newData.val() === 'bus' || newData.val() === 'taxi' || newData.val() === 'internal' || newData.val() === 'external' || newData.val() === 'transport'"
+    },
+    "status": {
+     ".validate": "newData.val() === 'open' || newData.val() === 'accepted'"
+    },
+    "offers": {
+     "$p": {
+      ".write": "auth != null && auth.token.email != null && auth.token.email.substring(0,9) === $p && (root.child('acct/'+$p).val() === auth.token.email || (!root.child('acct/'+$p).exists() && auth.token.email === $p+'@tuk.local')) && root.child('members/'+$p+'/end').val() > now && root.child('members/'+$p+'/suspended').val() != true && (!data.exists() || !newData.exists())",
+      ".validate": "newData.hasChildren(['name','status','ts'])",
+      "name": {
+       ".validate": true
+      },
+      "tuk": {
+       ".validate": true
+      },
+      "veh": {
+       ".validate": true
+      },
+      "ts": {
+       ".validate": true
+      },
+      "status": {
+       ".validate": "newData.val() === 'pending' || newData.val() === 'accepted' || newData.val() === 'rejected'"
+      },
+      "$other": {
+       ".validate": false
       }
+     }
+    },
+    "$other": {
+     ".validate": false
     }
+   }
+  },
+  "ratings": {
+   ".read": true,
+   "$ph": {
+    "$rid": {
+     ".write": "auth != null && !data.exists() && root.child('rides/'+$rid+'/cid').val() === auth.uid",
+     ".validate": "newData.hasChildren(['s','by','ts']) && newData.child('s').isNumber() && newData.child('s').val() >= 1 && newData.child('s').val() <= 5 && newData.child('by').val() === auth.uid",
+     "s": {
+      ".validate": true
+     },
+     "by": {
+      ".validate": true
+     },
+     "ts": {
+      ".validate": true
+     },
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "chats": {
+   "$rid": {
+    ".read": "auth != null && (root.child('rides/'+$rid+'/cid').val() === auth.uid || (auth.token.email != null && root.child('rides/'+$rid+'/driver').val() === auth.token.email.substring(0,9) && (root.child('acct/'+auth.token.email.substring(0,9)).val() === auth.token.email || (!root.child('acct/'+auth.token.email.substring(0,9)).exists() && auth.token.email === auth.token.email.substring(0,9)+'@tuk.local'))))",
+    ".write": "auth != null && !newData.exists() && (root.child('rides/'+$rid+'/cid').val() === auth.uid || !root.child('rides/'+$rid).exists())",
+    "$mid": {
+     ".write": "auth != null && !data.exists() && (root.child('rides/'+$rid+'/cid').val() === auth.uid || (auth.token.email != null && root.child('rides/'+$rid+'/driver').val() === auth.token.email.substring(0,9) && (root.child('acct/'+auth.token.email.substring(0,9)).val() === auth.token.email || (!root.child('acct/'+auth.token.email.substring(0,9)).exists() && auth.token.email === auth.token.email.substring(0,9)+'@tuk.local'))))",
+     ".validate": "newData.hasChildren(['uid','w','text','ts']) && newData.child('uid').val() === auth.uid && (newData.child('w').val() === 'c' || newData.child('w').val() === 'd') && newData.child('text').isString() && newData.child('text').val().length <= 500",
+     "uid": {
+      ".validate": true
+     },
+     "w": {
+      ".validate": true
+     },
+     "text": {
+      ".validate": true
+     },
+     "ts": {
+      ".validate": true
+     },
+     "v": {
+      ".validate": true
+     },
+     "dur": {
+      ".validate": "newData.isNumber() && newData.val() <= 120"
+     },
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "voices": {
+   "$rid": {
+    ".read": "auth != null && (root.child('rides/'+$rid+'/cid').val() === auth.uid || (auth.token.email != null && root.child('rides/'+$rid+'/driver').val() === auth.token.email.substring(0,9) && (root.child('acct/'+auth.token.email.substring(0,9)).val() === auth.token.email || (!root.child('acct/'+auth.token.email.substring(0,9)).exists() && auth.token.email === auth.token.email.substring(0,9)+'@tuk.local'))))",
+    ".write": "auth != null && !newData.exists() && (root.child('rides/'+$rid+'/cid').val() === auth.uid || !root.child('rides/'+$rid).exists())",
+    "$mid": {
+     ".write": "auth != null && !data.exists() && (root.child('rides/'+$rid+'/cid').val() === auth.uid || (auth.token.email != null && root.child('rides/'+$rid+'/driver').val() === auth.token.email.substring(0,9) && (root.child('acct/'+auth.token.email.substring(0,9)).val() === auth.token.email || (!root.child('acct/'+auth.token.email.substring(0,9)).exists() && auth.token.email === auth.token.email.substring(0,9)+'@tuk.local'))))",
+     ".validate": "newData.isString() && newData.val().length < 400000 && newData.val().beginsWith('data:audio')"
+    }
+   }
   }
+ }
 }
