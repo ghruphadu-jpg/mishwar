@@ -1,24 +1,51 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تحميل تطبيق المواصلات في سيئون</title>
-<meta name="theme-color" content="#2b3a8c"><link rel="icon" href="icon-192.png">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f3d8f">
+<title>تحميل تطبيق مشوار</title>
+<link rel="icon" href="icon-192.png">
 <style>
-:root{--bg:#eef0f4;--s:#fff;--ink:#14182b;--mut:#565d75;--ln:#d8dce6;--ac:#2b3a8c;--on:#fff}
-@media(prefers-color-scheme:dark){:root{--bg:#0e111f;--s:#181c31;--ink:#eceef8;--mut:#9ba1ba;--ln:#2a3050;--ac:#93a3ff;--on:#0e111f}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Segoe UI",Tahoma,sans-serif;padding:24px 16px}
-main{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px;text-align:center}
-img{width:96px;height:96px;border-radius:22px;margin:0 auto}h1{margin:0;font-size:24px}p{margin:0;color:var(--mut)}
-.btn{display:block;background:var(--ac);color:var(--on);text-decoration:none;font-weight:600;font-size:18px;padding:14px;border-radius:14px}
-.box{background:var(--s);border:1px solid var(--ln);border-radius:14px;padding:14px 16px;text-align:start}
-.box b{display:block;margin-bottom:4px}ol{margin:0;padding-inline-start:20px;color:var(--mut)}
-</style></head><body><main>
-<img src="icon-192.png" alt="أيقونة التطبيق">
-<h1>المواصلات في سيئون</h1>
-<p>تكتك ورحلات داخلية وخارجية في سيئون</p>
-<a class="btn" href="seiyun.apk" download>تحميل التطبيق لأندرويد</a>
-<div class="box"><b>طريقة التثبيت</b><ol>
-<li>اضغط «تحميل التطبيق» وانتظر انتهاء التحميل.</li>
-<li>افتح الملف من إشعارات التحميل أو من تطبيق الملفات.</li>
-<li>إذا طلب الجوال السماح بالتثبيت من هذا المصدر، فاسمح به ثم اضغط «تثبيت».</li></ol></div>
-<div class="box"><b>مستخدمو آيفون</b><p>افتح <a href="./" style="color:var(--ac)">رابط التطبيق</a> في Safari، ثم اضغط زر المشاركة واختر «إضافة إلى الشاشة الرئيسية».</p></div>
-</main></body></html>
+:root{--bg:#eef1f9;--card:#fff;--ink:#0a2a66;--sub:#52607a;--blue:#0f3d8f;--gold:#f2b81d;--warn:#fff6dc;--warn-ink:#6b4b00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1630;--card:#13224a;--ink:#eaf0ff;--sub:#a9b7d6;--blue:#4c86e6;--warn:#3a2f10;--warn-ink:#ffd978}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+body{min-height:100vh;display:flex;justify-content:center;padding:max(20px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom))}
+main{width:100%;max-width:440px;background:var(--card);border-radius:28px;padding:28px 22px;box-shadow:0 10px 30px rgba(10,42,102,.12);align-self:flex-start;text-align:center}
+.ic{width:112px;height:112px;border-radius:26px;box-shadow:0 8px 20px rgba(10,42,102,.25)}
+h1{margin:16px 0 4px;font-size:28px}
+p.s{margin:0 0 20px;color:var(--sub);line-height:1.7}
+.btn{display:block;background:linear-gradient(135deg,#1a63cc,#0a2a66);color:#fff;text-decoration:none;font-weight:700;font-size:18px;padding:16px;border-radius:16px;border-bottom:4px solid var(--gold)}
+.btn:active{transform:scale(.98)}
+h2{font-size:17px;margin:24px 0 8px;text-align:right}
+ol{margin:0;padding:0 20px 0 0;text-align:right;color:var(--sub);line-height:1.9}
+a.l{color:var(--blue);font-weight:600}
+.ver{margin-top:22px;font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<main>
+  <img class="ic" src="icon-192.png" alt="أيقونة مشوار">
+  <h1>مشوار</h1>
+  <p class="s">المواصلات في سيئون: تكتك، سفر داخلي وخارجي، ونقل</p>
+
+  <a class="btn" href="mishwar.apk?v=2" download="mishwar.apk">تحميل التطبيق لأندرويد</a>
+
+  <h2>طريقة التثبيت</h2>
+  <ol>
+    <li>اضغط «تحميل التطبيق» وانتظر انتهاء التحميل.</li>
+    <li>افتح الملف من إشعارات التحميل أو من تطبيق الملفات.</li>
+    <li>إذا طلب الجوال السماح بالتثبيت من هذا المصدر، فاسمح به ثم اضغط «تثبيت».</li>
+  </ol>
+
+  <h2>مستخدمو آيفون</h2>
+  <ol>
+    <li>افتح <a class="l" href="./">رابط التطبيق</a> في Safari.</li>
+    <li>اضغط زر المشاركة واختر «إضافة إلى الشاشة الرئيسية».</li>
+  </ol>
+
+  <div class="ver">الإصدار 2</div>
+</main>
+</body>
+</html>
