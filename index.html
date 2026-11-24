@@ -292,7 +292,7 @@ const A={
   offer(b){const m=S.me;db.ref('rides/'+b.closest('[data-id]').dataset.id+'/offers/'+S.ph).set({name:m.name,tuk:m.tukNo||'',veh:m.veh||'',status:'pending',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>toast('تم إرسال موافقتك للعميل')).catch(e=>toast('تعذر الإرسال: '+e.code))},
   unoffer(b){db.ref('rides/'+b.closest('[data-id]').dataset.id+'/offers/'+S.ph).remove()},
   okOffer(b){const id=b.closest('[data-id]').dataset.id,p=b.dataset.p,u={status:'accepted',driver:p};u['offers/'+p+'/status']='accepted';db.ref('rides/'+id).update(u).then(()=>openChat(id,'c')).catch(e=>toast('تعذر القبول: '+e.code))},
-  hide(b){const id=b.closest('[data-id]').dataset.id;HID.push(id);try{localStorage.setItem('hid',JSON.stringify(HID.slice(-200)))}catch(e){}render()},
+  hide(b){const id=b.closest('[data-id]').dataset.id;let H=[];try{H=JSON.parse(localStorage.getItem('hid')||'[]')}catch(e){}H.push(id);try{localStorage.setItem('hid',JSON.stringify(H.slice(-200)))}catch(e){}render()},
   noOffer(b){db.ref('rides/'+b.closest('[data-id]').dataset.id+'/offers/'+b.dataset.p+'/status').set('rejected')},
   cancelRide(b){const id=b.closest('[data-id]').dataset.id;if(!confirm('إنهاء الطلب؟'))return;closeChat();Promise.all([db.ref('chats/'+id).remove().catch(()=>{}),db.ref('voices/'+id).remove().catch(()=>{})]).then(()=>db.ref('rides/'+id).remove()).then(()=>toast('تم حذف الطلب')).catch(e=>toast('تعذر حذف الطلب: '+e.code,6000))},
   chat(b){openChat(b.closest('[data-id]').dataset.id,b.dataset.w)},
