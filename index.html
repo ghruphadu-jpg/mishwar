@@ -203,8 +203,9 @@ input,textarea,select{font-size:16px}
 (async function(){
   const loadScript=(urls)=>new Promise((resolve,reject)=>{
     let i=0; const next=()=>{ if(i>=urls.length){reject(new Error('script load failed'));return;}
-      const sc=document.createElement('script'); sc.src=urls[i++]; sc.async=false;
-      sc.onload=()=>resolve(); sc.onerror=()=>{sc.remove();next()}; document.head.appendChild(sc);
+      const sc=document.createElement('script'); sc.src=urls[i++]; sc.async=false; let done=0;
+      const tm=setTimeout(()=>{if(!done){done=1;sc.remove();next()}},12000);
+      sc.onload=()=>{if(done)return;done=1;clearTimeout(tm);resolve()}; sc.onerror=()=>{if(done)return;done=1;clearTimeout(tm);sc.remove();next()}; document.head.appendChild(sc);
     }; next();
   });
   const loadFirebase=async()=>{
