@@ -204,12 +204,12 @@ input,textarea,select{font-size:16px}
   const loadScript=(urls)=>new Promise((resolve,reject)=>{
     let i=0; const next=()=>{ if(i>=urls.length){reject(new Error('script load failed'));return;}
       const sc=document.createElement('script'); sc.src=urls[i++]; sc.async=false; let done=0;
-      const tm=setTimeout(()=>{if(!done){done=1;sc.remove();next()}},12000);
+      const tm=setTimeout(()=>{if(!done){done=1;sc.remove();next()}},7000);
       sc.onload=()=>{if(done)return;done=1;clearTimeout(tm);resolve()}; sc.onerror=()=>{if(done)return;done=1;clearTimeout(tm);sc.remove();next()}; document.head.appendChild(sc);
     }; next();
   });
   const loadFirebase=async()=>{
-    const bases=['https://www.gstatic.com/firebasejs/10.12.2/','https://cdn.jsdelivr.net/npm/firebase@10.12.2/compat/','https://www.gstatic.com/firebasejs/10.12.2/'];
+    const bases=['https://cdn.jsdelivr.net/npm/firebase@10.12.2/','https://www.gstatic.com/firebasejs/10.12.2/','https://unpkg.com/firebase@10.12.2/','https://cdn.jsdelivr.net/npm/firebase@10.12.2/compat/'];
     for(const base of bases){try{
       if(!window.firebase||!firebase.initializeApp) await loadScript([base+'firebase-app-compat.js']);
       if(!firebase.auth) await loadScript([base+'firebase-auth-compat.js']);
@@ -220,15 +220,9 @@ input,textarea,select{font-size:16px}
   };
   // لا ننتظر Leaflet كي يبدأ التطبيق؛ الخرائط ميزة اختيارية.
   loadScript(['https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js']).catch(()=>{});
-  const firebaseReady=await loadFirebase();
-  if(!firebaseReady){
-    // ابقِ الواجهة ظاهرة؛ أعد المحاولة بصمت دورياً.
-    const retry=async()=>{if(await loadFirebase())location.reload()};
-    setTimeout(retry,5000); setTimeout(retry,15000); return;
-  }
-  try{firebase.database.INTERNAL.forceLongPolling()}catch(e){}
-firebase.initializeApp({apiKey:"AIzaSyDfW7QhCSmDoTsgr9EgjtiO2MyhWoZZVb4",authDomain:"mishwar-1d868.firebaseapp.com",databaseURL:"https://mishwar-1d868-default-rtdb.firebaseio.com",projectId:"mishwar-1d868",storageBucket:"mishwar-1d868.firebasestorage.app",messagingSenderId:"1089490145219",appId:"1:1089490145219:web:5edc0f64171030806bf776"});
-const auth=firebase.auth(),db=firebase.database(),$=id=>document.getElementById(id);
+const OFFERR={code:'الاتصال بالخادم لم يكتمل، حاول بعد لحظات'};
+const NOREF=()=>({on(){},off(){},once:()=>Promise.reject(OFFERR),set:()=>Promise.reject(OFFERR),update:()=>Promise.reject(OFFERR),remove:()=>Promise.reject(OFFERR),push:()=>{const p=Promise.reject(OFFERR);p.catch(()=>{});return p},transaction:()=>Promise.reject(OFFERR),child:NOREF,orderByChild:NOREF,equalTo:NOREF,limitToLast:NOREF,limitToFirst:NOREF});
+let db={ref:NOREF},auth={currentUser:null,onAuthStateChanged(){},signInAnonymously:()=>Promise.reject(OFFERR),signInWithEmailAndPassword:()=>Promise.reject(OFFERR),createUserWithEmailAndPassword:()=>Promise.reject(OFFERR),setPersistence:()=>Promise.resolve(),signOut:()=>Promise.resolve()};const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const VT='🎤 رسالة صوتية ',VD=t=>typeof t=='string'&&t.indexOf(VT)==0?(+t.slice(VT.length)||1):0,OTH='__other',DEST={internal:['المكلا','عدن','العبر','تريم','عتق','الغيضة'],external:['السعودية','عمان']};
 const CITY={'السعودية':['الرياض','جدة','نجران','الدمام'],'عمان':['صلالة','مسقط']};
@@ -320,19 +314,13 @@ function reqUI(k,nid,lid,did){if(S.ph&&S.me)numberClients();const n=Date.now(),L
   if(did&&k&&S.ph&&S.me&&S.me.services&&[].concat(k).some(x=>S.me.services[x])){const op=L(S.open).filter(fresh).filter(r=>!HID.includes(r.id)).sort((a,b)=>b.ts-a.ts),ac=L(S.acc).filter(r=>!HID.includes(r.id));
     $(did).innerHTML=ac.map(r=>`<div class="row" data-id="${r.id}"><button type="button" data-a="hide" aria-label="إزالة" style="align-self:flex-end;width:28px;height:28px;min-height:0;padding:0;border:0;border-radius:50%;background:var(--fill);color:var(--mut);font-size:14px;line-height:1">✕</button><div class="top"><div class="nm">${cl(r.id)}<div class="meta">${rd(r)}</div></div><span class="pill free">مقبول</span></div><div class="acts"><button class="btn p" data-a="chat" data-w="d">💬 دردشة${S.un[r.id]?'<i class="nb">جديد</i>':''}</button></div></div>`).join('')+
     op.map(r=>{const o=(r.offers||{})[S.ph];return `<div class="row" data-id="${r.id}"><button type="button" data-a="hide" aria-label="إخفاء" style="align-self:flex-end;width:28px;height:28px;min-height:0;padding:0;border:0;border-radius:50%;background:var(--fill);color:var(--mut);font-size:14px;line-height:1">✕</button><div class="top"><div class="nm">${cl(r.id)}<div class="meta">${rd(r)} · ${ago(n-r.ts)}</div>${r.when?`<div class="meta">الموعد: ${esc(r.when)}</div>`:''}${r.note?`<div class="note">${esc(r.note)}</div>`:''}</div></div><div class="acts">${!o?'<button class="btn p" data-a="offer">أستطيع القيام بالمشوار</button>':o.status=='rejected'?'<span class="pill busy">رفض العميل عرضك</span>':'<span class="pill soon">بانتظار رد العميل</span><button class="btn" data-a="unoffer">سحب</button>'}</div></div>`}).join('')||'<div class="empty">لا توجد طلبات الآن.</div>'}}
-S.rts={};db.ref('ratings').on('value',s=>{S.rts=s.val()||{};render()},()=>{});
+S.rts={};
 const rate=ph=>{const o=Object.values(S.rts[ph]||{});return o.length?`⭐ ${(o.reduce((a,x)=>a+x.s,0)/o.length).toFixed(1)} (${o.length})`:''};
 const rateRow=r=>{const m=(S.rts[r.driver]||{})[r.id];return m?`<div class="hint">تقييمك للسائق: ${'⭐'.repeat(m.s)}</div>`:`<div class="hint">قيّم السائق:</div><div class="acts">${[1,2,3,4,5].map(n=>`<button class="btn" data-a="star" data-n="${n}" data-p="${r.driver}">${n}⭐</button>`).join('')}</div>`};
 /* ---------- auth ---------- */
-auth.onAuthStateChanged(async u=>{if(!u&&!AN){AN=1;auth.signInAnonymously().catch(()=>{})}if(u)sweepAll();
-  LS.forEach(r=>r.off());LS=[];S.ph=null;S.me=null;S.admin=false;S.members={};geo(false);S.my={};S.open={};S.acc={};S.dl=0;S.dn=0;S.da=0;S.so={};S.soi=0;S.un={};CL={};closeChat();if(u)myRides(u.uid);
-  if(u&&u.email&&u.email.endsWith('@tuk.local')){S.ph=u.email.slice(0,9);const r=db.ref('members/'+S.ph);LS.push(r);
-    r.on('value',s=>{S.me=s.val();if(!S.me){toast('رقمك غير مسجل لدى المكتب');auth.signOut();return}drvRides();render()},e=>toast('تعذر قراءة حسابك: '+e.code))}
-  else if(u&&u.email){let s;try{s=await db.ref('admin').once('value')}catch(e){toast('تعذر قراءة الصلاحيات: '+e.code);auth.signOut();return}S.admin=s.val()===u.uid;
-    if(S.admin){const r=db.ref('members');LS.push(r);r.on('value',s=>{S.members=s.val()||{};render()})}else{toast('هذا الحساب ليس حساب المكتب');auth.signOut()}}
-  render()});
-db.ref('drivers').on('value',s=>{S.drivers=s.val()||{};render()});
-db.ref('trips').on('value',s=>{S.trips=s.val()||{};render()});
+
+
+
 const loginHtml=`<div class="panel login"><b>دخول السائق</b><p class="hint">اكتب رقم جوالك وكلمة المرور التي سلّمها لك المكتب. نسيتها؟ تواصل مع المكتب لإعادة تعيينها.</p><input class="lg-ph" type="tel" dir="ltr" inputmode="numeric" placeholder="7XX XXX XXX"><input class="lg-pw" type="password" dir="ltr" placeholder="كلمة المرور"><label class="rem"><input type="checkbox" class="lg-rm"> تذكّرني (البقاء مسجلاً للدخول)</label><button class="btn p" data-a="login">دخول</button><p class="err" hidden></p></div>`;
 $('tk-login').innerHTML=$('tr-login').innerHTML=loginHtml;
 const TOP=`<div class="tbar"><button class="out" data-a="out">تسجيل الخروج</button><button class="out" data-a="pwt">إعادة تعيين كلمة المرور</button></div><form class="pwf" hidden><input class="pw-o" type="password" dir="ltr" placeholder="كلمة المرور الحالية" autocomplete="current-password"><input class="pw-n" type="password" dir="ltr" placeholder="كلمة المرور الجديدة (6 أحرف فأكثر)" autocomplete="new-password"><input class="pw-c" type="password" dir="ltr" placeholder="أعد كتابة الجديدة" autocomplete="new-password"><p class="err" hidden></p><button class="btn p">حفظ كلمة المرور</button></form>`;
@@ -408,7 +396,7 @@ $('tf').onsubmit=e=>{e.preventDefault();const dp=$('f-day').value.split('-').map
   db.ref('trips').push(t).then(()=>{S.dest=t.dest;$('f-note').value='';$('f-od').value='';$('f-oc').value='';toast('تم نشر رحلتك')}).catch(e=>msg('f-err','تعذر النشر: '+e.code))};
 /* ---------- admin ---------- */
 const plans=()=>{const c=$('n-plan').value||1;$('n-plan').innerHTML=[1,3,6,12].map(p=>opt(p,PL[p]+' ('+FEE[p]+' ريال)')).join('');$('n-plan').value=c;$('n-fee').value=FEE[c]};plans();$('n-plan').onchange=function(){$('n-fee').value=FEE[this.value]};
-db.ref('settings/fees').on('value',s=>{const v=s.val()||{};[1,3,6,12].forEach(p=>{if(v['m'+p]>=0){FEE[p]=v['m'+p]}$('fe-'+p).value=FEE[p]});plans();render()});
+
 $('ad-f').onsubmit=e=>{e.preventDefault();const o={};[1,3,6,12].forEach(p=>o['m'+p]=Math.max(0,Math.round(+$('fe-'+p).value)));db.ref('settings/fees').set(o).then(()=>toast('تم حفظ الرسوم')).catch(()=>toast('تعذر الحفظ'))};
 $('ad-login').onsubmit=e=>{e.preventDefault();auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>auth.signInWithEmailAndPassword($('a-em').value.trim(),$('a-pw').value)).catch(e=>msg('a-err',e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'||e.code=='auth/user-not-found'?'البريد أو كلمة المرور غير صحيحة':'تعذر الدخول: '+e.code))};
 $('a-q').oninput=render;
@@ -468,6 +456,24 @@ document.addEventListener('click',e=>{if(e.target.closest('button,.hub-card')&&n
 addEventListener('error',e=>{});if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));function updUnread(){const un=[...Object.keys(S.my).filter(i=>S.un[i]&&S.my[i].status=='accepted').map(i=>[i,'c']),...Object.keys(S.acc).filter(i=>S.un[i]&&!hidn(i)).map(i=>[i,'d'])];S.unl=un;$('gunb').hidden=!un.length||!!S.chat||!$('s-home').hidden;try{document.title=(un.length?'(💬) ':'')+'مشوار';if(navigator.setAppBadge)un.length?navigator.setAppBadge(un.length):navigator.clearAppBadge()}catch(e){}}
 {const _r=render;render=function(){_r();try{updUnread()}catch(e){}}}
 addEventListener('hashchange',render);setInterval(render,30000);initForm();render();try{if(!localStorage.getItem('legal_ok'))$('legal').hidden=false}catch(e){$('legal').hidden=false}
+
+function startFB(){
+db.ref('ratings').on('value',s=>{S.rts=s.val()||{};render()},()=>{});
+auth.onAuthStateChanged(async u=>{if(!u&&!AN){AN=1;auth.signInAnonymously().catch(()=>{})}if(u)sweepAll();
+  LS.forEach(r=>r.off());LS=[];S.ph=null;S.me=null;S.admin=false;S.members={};geo(false);S.my={};S.open={};S.acc={};S.dl=0;S.dn=0;S.da=0;S.so={};S.soi=0;S.un={};CL={};closeChat();if(u)myRides(u.uid);
+  if(u&&u.email&&u.email.endsWith('@tuk.local')){S.ph=u.email.slice(0,9);const r=db.ref('members/'+S.ph);LS.push(r);
+    r.on('value',s=>{S.me=s.val();if(!S.me){toast('رقمك غير مسجل لدى المكتب');auth.signOut();return}drvRides();render()},e=>toast('تعذر قراءة حسابك: '+e.code))}
+  else if(u&&u.email){let s;try{s=await db.ref('admin').once('value')}catch(e){toast('تعذر قراءة الصلاحيات: '+e.code);auth.signOut();return}S.admin=s.val()===u.uid;
+    if(S.admin){const r=db.ref('members');LS.push(r);r.on('value',s=>{S.members=s.val()||{};render()})}else{toast('هذا الحساب ليس حساب المكتب');auth.signOut()}}
+  render()});
+db.ref('drivers').on('value',s=>{S.drivers=s.val()||{};render()});
+db.ref('trips').on('value',s=>{S.trips=s.val()||{};render()});
+db.ref('settings/fees').on('value',s=>{const v=s.val()||{};[1,3,6,12].forEach(p=>{if(v['m'+p]>=0){FEE[p]=v['m'+p]}$('fe-'+p).value=FEE[p]});plans();render()});
+}
+(async function connectFB(){let ok=false;while(!ok){ok=await loadFirebase();if(!ok)await new Promise(r=>setTimeout(r,2500))}
+  try{firebase.database.INTERNAL.forceLongPolling()}catch(e){}
+  firebase.initializeApp({apiKey:"AIzaSyDfW7QhCSmDoTsgr9EgjtiO2MyhWoZZVb4",authDomain:"mishwar-1d868.firebaseapp.com",databaseURL:"https://mishwar-1d868-default-rtdb.firebaseio.com",projectId:"mishwar-1d868",storageBucket:"mishwar-1d868.firebasestorage.app",messagingSenderId:"1089490145219",appId:"1:1089490145219:web:5edc0f64171030806bf776"});
+  auth=firebase.auth();db=firebase.database();startFB();})();
 })();
 
 
