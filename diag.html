@@ -1,0 +1,28 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>فحص مشاوير</title>
+<style>body{font:15px/1.7 system-ui,sans-serif;margin:0;padding:16px;background:#f3f8fa;color:#0f1b17}h1{font-size:20px;margin:0 0 8px}.r{background:#fff;border-radius:12px;padding:10px 12px;margin:8px 0;border-right:6px solid #bbb}.ok{border-color:#1a9b5b}.bad{border-color:#d33}.w{border-color:#e0a800}small{display:block;color:#555;direction:ltr;text-align:left;word-break:break-all}button{font:inherit;padding:10px 18px;border-radius:10px;border:0;background:#0b3d6e;color:#fff;margin:8px 0}</style></head><body>
+<h1>فحص الاتصال — مشاوير</h1><div id="info"></div><button id="go">إعادة الفحص</button><div id="out"></div>
+<script>
+const out=document.getElementById('out'),T=12000;
+function row(t,cls,det){const d=document.createElement('div');d.className='r '+cls;d.innerHTML='<b>'+t+'</b>'+(det?'<small>'+det+'</small>':'');out.appendChild(d);return d}
+const wrap=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error('انتهت المهلة '+ms/1000+' ث')),ms))]);
+async function fch(name,url,opt){const t0=performance.now(),d=row(name+' …','w',url);
+ try{const r=await wrap(fetch(url+(url.includes('?')?'&':'?')+'_='+Date.now(),opt||{cache:'no-store'}),T);const b=opt&&opt.mode=='no-cors'?'':(await wrap(r.text(),T)).length;
+ d.className='r ok';d.innerHTML='<b>✅ '+name+' — '+Math.round(performance.now()-t0)+' مللي ثانية'+(b!==''?' — '+b+' حرف':'')+' (HTTP '+(r.status||'؟')+')</b><small>'+url+'</small>'}
+ catch(e){d.className='r bad';d.innerHTML='<b>❌ '+name+' — '+e.message+'</b><small>'+url+'</small>'}}
+function scr(name,url){return new Promise(res=>{const t0=performance.now(),d=row(name+' …','w',url),s=document.createElement('script'),to=setTimeout(()=>{d.className='r bad';d.innerHTML='<b>❌ '+name+' — انتهت المهلة (معلّق)</b><small>'+url+'</small>';s.remove();res()},T);
+ s.onload=()=>{clearTimeout(to);d.className='r ok';d.innerHTML='<b>✅ '+name+' — '+Math.round(performance.now()-t0)+' مللي ثانية</b><small>'+url+'</small>';res()};
+ s.onerror=()=>{clearTimeout(to);d.className='r bad';d.innerHTML='<b>❌ '+name+' — فشل التحميل</b><small>'+url+'</small>';res()};s.src=url+'?_='+Date.now();document.head.appendChild(s)})}
+async function run(){out.innerHTML='';const c=navigator.connection||{};
+ document.getElementById('info').innerHTML='<div class="r">الشبكة: '+(c.effectiveType||'؟')+' · نوع: '+(c.type||'؟')+' · توفير بيانات: '+(c.saveData?'نعم':'لا')+' · متصل: '+navigator.onLine+'<small>'+navigator.userAgent+'</small></div>';
+ try{const rg=await navigator.serviceWorker.getRegistrations();row('Service Worker: '+(rg.length?'مسجّل ('+rg.length+')':'غير مسجّل'),'w',rg.map(r=>r.scope).join(' ')||'');const ks=await caches.keys();row('الذاكرة المحفوظة: '+(ks.join(' , ')||'فارغة'),'w')}catch(e){row('Service Worker: غير مدعوم','w',e.message)}
+ await fch('صفحة التطبيق index.html','index.html');
+ await fch('ملف sw.js','sw.js');
+ await scr('Firebase من jsdelivr','https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js');
+ await scr('Firebase من gstatic','https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+ await scr('Firebase من unpkg','https://unpkg.com/firebase@10.12.2/firebase-app-compat.js');
+ await fch('قاعدة بيانات Firebase','https://mishwar-1d868-default-rtdb.firebaseio.com/.json?shallow=true');
+ await fch('تسجيل الدخول Firebase','https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDfW7QhCSmDoTsgr9EgjtiO2MyhWoZZVb4',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',cache:'no-store'});
+ await fch('خطوط جوجل','https://fonts.googleapis.com/css2?family=Readex+Pro&display=swap',{mode:'no-cors',cache:'no-store'});
+ row('انتهى الفحص — صوّر الشاشة كاملة وأرسلها','ok')}
+document.getElementById('go').onclick=run;run();
+</script></body></html>
